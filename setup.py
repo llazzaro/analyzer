@@ -13,9 +13,9 @@ setup(name='ultrafinance',
       description="python project for finance: realtime data collection, analyze, algorithmic trading",
       long_description="""""",
       classifiers=[
-        "Development Status :: 1 - Beta",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+          "Development Status :: 1 - Beta",
+          "Intended Audience :: Developers",
+          "License :: OSI Approved :: MIT License",
       ],
       keywords='python, Finance, Algorithm, Trading, Realtime, QuantLib, pydispather',
       author='Pan',
@@ -24,20 +24,19 @@ setup(name='ultrafinance',
       license='MIT',
 
       install_not_requires=[
-        'hbase-thrift>=0.20.4',
-        'pandas',
-        'xlwt',
-        'xlrd',
-        'matplotlib>=1.1.0'
+          'hbase-thrift>=0.20.4',
+          'pandas',
+          'xlwt',
+          'xlrd',
+          'matplotlib>=1.1.0'
       ],
       packages=['ultrafinance'],
       include_package_data=True,
       install_requires=[
-        'scipy>=0.13.0',
-        'numpy>=1.5.1',
-        'beautifulsoup4',
-        'SQLAlchemy>=0.8',
-        'mox'
+          'scipy>=0.13.0',
+          'numpy>=1.5.1',
+          'beautifulsoup4',
+          'SQLAlchemy>=0.8',
+          'mox'
       ],
-      cmdclass = {'test': TestCommand, 'clean': CleanCommand }
-)
+      cmdclass={'test': TestCommand, 'clean': CleanCommand})

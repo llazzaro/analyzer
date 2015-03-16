@@ -5,6 +5,7 @@ Created on May 6, 2011
 '''
 import traceback
 
+
 class Errors(object):
     """ class hosts error code constants """
     # general errors
@@ -65,6 +66,7 @@ class Errors(object):
     TABLENAME_NOT_SET = 1300
     TABLENAME_ALREADY_SET = 1301
     INVALID_SAVER_NAME = 1302
+
 
 class UfException(Exception):
     """ Ultra-Finance exception """

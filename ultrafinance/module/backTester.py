@@ -3,6 +3,12 @@ Created on Dec 3, 2011
 
 @author: ppa
 '''
+import os
+import sys
+import traceback
+import logging
+import logging.config
+
 
 from ultrafinance.backTest.tickSubscriber.strategies.strategyFactory import StrategyFactory
 from ultrafinance.backTest.tradingCenter import TradingCenter
@@ -16,22 +22,31 @@ from ultrafinance.backTest.appGlobal import appGlobal
 from ultrafinance.backTest.metric import MetricManager
 from ultrafinance.backTest.indexHelper import IndexHelper
 from ultrafinance.backTest.history import History
-from ultrafinance.backTest.constant import *
+from ultrafinance.backTest.constant import (
+    TRADE_TYPE,
+    CONF_ULTRAFINANCE_SECTION,
+    CONF_TRADE_TYPE,
+    CONF_INIT_CASH,
+    CONF_START_TRADE_DATE,
+    CONF_END_TRADE_DATE,
+    CONF_SYMBOL_FILE,
+    CONF_INDEX,
+    CONF_INPUT_DAM,
+    CONF_INPUT_DB,
+    CONF_SAVER,
+    CONF_OUTPUT_DB_PREFIX,
+    CONF_STRATEGY_NAME
+)
 from ultrafinance.backTest.metric import BasicMetric
-import os
-import sys
 
 from threading import Thread
 
-import json
-import traceback
-import logging.config
-import logging
 LOG = logging.getLogger()
+
 
 class BackTester(object):
     ''' back testing '''
-    def __init__(self, configFile, startTickDate = 0, startTradeDate = 0, endTradeDate = None, cash = 150000, symbolLists = None):
+    def __init__(self, configFile, startTickDate=0, startTradeDate=0, endTradeDate=None, cash=150000, symbolLists=None):
         LOG.debug("Loading config from %s" % configFile)
         self.__config = PyConfig()
         self.__config.setSource(configFile)
@@ -92,7 +107,7 @@ class BackTester(object):
                 LOG.error("User Interrupted")
                 sys.exit("User Interrupted")
             except BaseException as excp:
-                LOG.error("Unexpected error when backtesting %s -- except %s, traceback %s" \
+                LOG.error("Unexpected error when backtesting %s -- except %s, traceback %s"
                           % (symbols, excp, traceback.format_exc(8)))
 
     def getMetrics(self):
@@ -103,6 +118,7 @@ class BackTester(object):
         ''' print metrics '''
         LOG.info(self.getMetrics())
 
+
 class TestRunner(object):
     ''' back testing '''
     def __init__(self, config, metricManager, accounts, symbols, startTickDate, endTradeDate, cash):
@@ -110,7 +126,7 @@ class TestRunner(object):
         self.__accountId = None
         self.__startTickDate = startTickDate
         self.__endTradeDate = endTradeDate
-        self.__tickFeeder = TickFeeder(start = startTickDate, end = endTradeDate)
+        self.__tickFeeder = TickFeeder(start=startTickDate, end=endTradeDate)
         self.__tradingCenter = TradingCenter()
         self.__tradingEngine = TradingEngine()
         self.__indexHelper = IndexHelper()
@@ -146,7 +162,7 @@ class TestRunner(object):
         ''' setup tickFeeder'''
         self.__tickFeeder.indexHelper = self.__indexHelper
         self.__tickFeeder.setSymbols(self.__symbols)
-        self.__tickFeeder.setDam(self._createDam("")) # no need to set symbol because it's batch operation
+        self.__tickFeeder.setDam(self._createDam(""))  # no need to set symbol because it's batch operation
 
         iSymbol = self.__config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_INDEX)
         self.__tickFeeder.setIndexSymbol(iSymbol)
@@ -171,7 +187,6 @@ class TestRunner(object):
                                                                                                               self.__startTickDate,
                                                                                                               self.__endTradeDate)})
 
-
     def _setupStrategy(self):
         ''' setup tradingEngine'''
         strategy = StrategyFactory.createStrategy(self.__config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
@@ -192,7 +207,7 @@ class TestRunner(object):
         ''' run backtest '''
         LOG.info("Running backtest for %s" % self.__symbols)
         #start trading engine
-        thread = Thread(target = self.__tradingEngine.runListener, args = ())
+        thread = Thread(target=self.__tradingEngine.runListener, args=())
         thread.setDaemon(False)
         thread.start()
 
@@ -224,8 +239,7 @@ class TestRunner(object):
         self.__saver.commit()
 
         self.__tradingEngine.stop()
-        thread.join(timeout = 240)
-
+        thread.join(timeout=240)
 
     def _printResult(self):
         ''' print result'''
@@ -234,7 +248,6 @@ class TestRunner(object):
         LOG.info("account %s" % account)
         LOG.debug([str(order) for order in account.orderHistory])
         LOG.debug("account position %s" % self.__accountManager.getAccountPostions(self.__accountId))
-
 
     def runTest(self):
         ''' run one test '''
@@ -249,8 +262,7 @@ def getBackTestResultDbName(symbols, strategyName, startTickDate, endTradeDate):
     return "%s__%s__%s__%s" % ('_'.join(symbols) if len(symbols) <= 1 else len(symbols), strategyName, startTickDate, endTradeDate if endTradeDate else "Now")
 
 if __name__ == "__main__":
-    backTester = BackTester("backtest_zscoreMomentumPortfolio.ini", startTickDate = 19901010, startTradeDate = 19901010, endTradeDate = 20131010)
+    backTester = BackTester("backtest_zscoreMomentumPortfolio.ini", startTickDate=19901010, startTradeDate=19901010, endTradeDate=20131010)
     backTester.setup()
     backTester.runTests()
     backTester.printMetrics()
-
