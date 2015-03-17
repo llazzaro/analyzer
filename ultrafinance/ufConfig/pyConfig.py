@@ -10,6 +10,7 @@ from ultrafinance.lib.errors import UfException, Errors
 import logging
 LOG = logging.getLogger()
 
+
 class PyConfig(object):
     ''' class that handles configuration '''
     def __init__(self):
@@ -41,7 +42,6 @@ class PyConfig(object):
         ''' get directory of conf file'''
         self.__validateConfig()
         return path.dirname(self.__fullPath)
-
 
     def getSection(self, section):
         ''' load all configuration '''
@@ -81,7 +81,6 @@ class PyConfig(object):
             msg = "No config file is loaded, please use setSource method first"
             LOG.error(msg)
             raise UfException(Errors.FILE_NOT_EXIST, msg)
-
 
 
 if __name__ == '__main__':

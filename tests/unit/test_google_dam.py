@@ -6,6 +6,7 @@ Created on Nov 27, 2011
 import unittest
 from ultrafinance.dam.googleDAM import GoogleDAM
 
+
 class testGoogleDam(unittest.TestCase):
 
     def setUp(self):

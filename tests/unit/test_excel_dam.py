@@ -9,6 +9,7 @@ import os
 from ultrafinance.model import Tick, Quote
 from ultrafinance.dam.excelDAM import ExcelDAM
 
+
 class testExcelDAM(unittest.TestCase):
 
     def setUp(self):

@@ -7,6 +7,7 @@ please refer to http://code.activestate.com/recipes/131499-observer-pattern/
 import unittest
 from ultrafinance.designPattern.observable import Observable
 
+
 class Data(Observable):
     def __init__(self, name=''):
         Observable.__init__(self)
@@ -29,6 +30,7 @@ class HexViewer:
         self.data = subject.data
         print('HexViewer: Subject %s has data 0x%x' % (subject.name, subject.getData()))
 
+
 class DecimalViewer:
     def __init__(self):
         self.data = 0
@@ -36,6 +38,7 @@ class DecimalViewer:
     def update(self, subject):
         self.data = subject.data
         print('DecimalViewer: Subject %s has data %d' % (subject.name, subject.getData()))
+
 
 class testObservable(unittest.TestCase):
     def setUp(self):

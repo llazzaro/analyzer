@@ -39,4 +39,9 @@ setup(name='ultrafinance',
           'SQLAlchemy>=0.8',
           'mox'
       ],
+      tests_require=[
+          'xlrd',
+          'xlwt',
+          'matplotlib'
+      ],
       cmdclass={'test': TestCommand, 'clean': CleanCommand})
