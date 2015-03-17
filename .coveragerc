@@ -1,0 +1,5 @@
+[run]
+source = ultrafinance
+
+[report]
+omit = tests
