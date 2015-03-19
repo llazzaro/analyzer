@@ -11,17 +11,18 @@ from hbase.Hbase import Client, ColumnDescriptor, Mutation
 from ultrafinance.lib.errors import UfException, Errors
 
 import logging
-LOG = logging.getLogger()
+LOG=logging.getLogger()
+
 
 class HBaseLib:
     ''' Hbase client '''
-    def __init__(self, ip='localhost', port=9090, timeout = 10):
-        transport = TSocket.TSocket(ip, int(port))
+    def __init__(self, ip='localhost', port=9090, timeout=10):
+        transport=TSocket.TSocket(ip, int(port))
         transport.setTimeout(timeout * 1000)
-        transport = TTransport.TBufferedTransport(transport)
-        protocol = TBinaryProtocol.TBinaryProtocol(transport)
+        transport=TTransport.TBufferedTransport(transport)
+        protocol=TBinaryProtocol.TBinaryProtocol(transport)
 
-        self.__client = Client(protocol)
+        self.__client=Client(protocol)
         transport.open()
 
     def getTableNames(self):
@@ -48,7 +49,7 @@ class HBaseLib:
             self.__client.createTable(tName, ColumnDescriptors)
         except ttypes.AlreadyExists as excp:
             raise UfException(Errors.HBASE_CREATE_ERROR,
-                              "AlreadyExists Error when creating table %s with cols: %s): %s" % \
+                              "AlreadyExists Error when creating table %s with cols: %s): %s" %
                               (tName, [col.name for col in ColumnDescriptors], excp.message))
 
     def getColumnDescriptors(self, tName):
@@ -67,12 +68,12 @@ class HBaseLib:
                 self.__client.mutateRowTs(tName, rowName, mutations, timestamp)
         except Exception as excp:
             raise UfException(Errors.HBASE_UPDATE_ERROR,
-                              "Error when updating table %s - rowName %s - mutations %s: %s" % \
+                              "Error when updating table %s - rowName %s - mutations %s: %s" %
                               (tName, rowName, mutations, excp))
 
     def getRow(self, tName, rowName):
         ''' get row '''
-        result = self.__client.getRow(tName, rowName)
+        result=self.__client.getRow(tName, rowName)
         if not result:
             return result
         else:
@@ -81,15 +82,15 @@ class HBaseLib:
     def scanTable(self, tName, columns, startRow="", endRow=None):
         ''' scan a table '''
         if endRow is None:
-            scanner = self.__client.scannerOpen(tName, str(startRow), columns)
+            scanner=self.__client.scannerOpen(tName, str(startRow), columns)
         else:
-            scanner = self.__client.scannerOpenWithStop(tName, startRow, str(endRow), columns)
-        ret = []
+            scanner=self.__client.scannerOpenWithStop(tName, startRow, str(endRow), columns)
+        ret=[]
 
-        row = self.__client.scannerGet(scanner)
+        row=self.__client.scannerGet(scanner)
         while row:
             ret.append(row[0])
-            row = self.__client.scannerGet(scanner)
+            row=self.__client.scannerGet(scanner)
 
         return ret
 
@@ -99,7 +100,7 @@ class HBaseLib:
 
 # testing
 if __name__ == '__main__':
-    h = HBaseLib()
+    h=HBaseLib()
 
     #delete all exiting tables
     for tName in h.getTableNames():
@@ -109,7 +110,7 @@ if __name__ == '__main__':
     #assert not h.getTableNames()
 
     #create table
-    tName = 'testTable'
+    tName='testTable'
 
     h.createTable(tName, [ColumnDescriptor(name='col1', maxVersions=5), ColumnDescriptor(name='col2', maxVersions=5)])
     print h.getTableNames()
@@ -125,14 +126,14 @@ if __name__ == '__main__':
     print h.getRow(tName, 'foo')
 
     #scan table
-    rows = h.scanTable(tName, columns=["col1", "col2"])
+    rows=h.scanTable(tName, columns=["col1", "col2"])
     print rows
     assert 2 == len(rows)
 
-    rows = h.scanTable(tName, columns=["col1", "col2"], startRow="foo")
+    rows=h.scanTable(tName, columns=["col1", "col2"], startRow="foo")
     print rows
     assert 1 == len(rows)
 
-    rows = h.scanTable(tName, columns=["col1", "col2"], endRow="foo")
+    rows=h.scanTable(tName, columns=["col1", "col2"], endRow="foo")
     print rows
     assert 1 == len(rows)

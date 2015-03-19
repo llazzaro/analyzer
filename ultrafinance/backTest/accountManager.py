@@ -9,7 +9,8 @@ from ultrafinance.backTest.constant import STATE_SAVER_ACCOUNT, STATE_SAVER_HOLD
 import copy
 
 import logging
-LOG = logging.getLogger()
+LOG=logging.getLogger()
+
 
 class AccountManager(object):
     '''
@@ -18,15 +19,15 @@ class AccountManager(object):
     '''
     def __init__(self):
         ''' constructor '''
-        self.__accounts = {}
-        self.__accountPositions = {}
-        self.saver = None
+        self.__accounts={}
+        self.__accountPositions={}
+        self.saver=None
 
-    def createAccount(self, cash, commission = 0):
+    def createAccount(self, cash, commission=0):
         ''' create account '''
-        account = Account(cash, commission)
-        self.__accounts[account.accountId] = account
-        self.__accountPositions[account.accountId] = [] # list contains tuple (time, position)
+        account=Account(cash, commission)
+        self.__accounts[account.accountId]=account
+        self.__accountPositions[account.accountId]=[]  # list contains tuple (time, position)
 
         return account.accountId
 
@@ -44,12 +45,12 @@ class AccountManager(object):
 
     def updateAccountsPosition(self, tickDict):
         ''' update account position based on new tick '''
-        curTime = tickDict.values()[0].time
+        curTime=tickDict.values()[0].time
 
         for accountId, account in self.__accounts.items():
             account.setLastTickDict(tickDict)
-            position = account.getTotalValue()
-            holdingValue = account.getHoldingValue()
+            position=account.getTotalValue()
+            holdingValue=account.getHoldingValue()
 
             self.__accountPositions[accountId].append((curTime, position))
             #record
