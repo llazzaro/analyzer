@@ -6,6 +6,7 @@ Created on Dec 18, 2011
 import unittest
 from ultrafinance.pyTaLib.indicator import Sma
 
+
 class testPyTaLib(unittest.TestCase):
     def setUp(self):
         pass
@@ -14,7 +15,10 @@ class testPyTaLib(unittest.TestCase):
         pass
 
     def testSma(self):
-        sma = Sma(period = 3)
-        expectedAvgs = [1, 1.5, 2, 3, 4]
-        for index, number in enumerate(range(1, 6) ):
-            self.assertEqual(expectedAvgs[index], sma(number))
+        period = 3
+        sma=Sma(period=period)
+        expectedAvgs=[1, 1.3333333333333333, 2, 3, 4]
+        for index, number in enumerate([1, 1, 1, 1, 2, 3, 4, 5]):
+            result = sma(number)
+            if index > period:
+                self.assertEqual(expectedAvgs[index - period], result)

@@ -40,19 +40,20 @@ def sharpeRatio(array, n=252):
 class Sma(object):
     def __init__(self, period):
         assert period == int(period) and period > 0, "Period must be an integer > 0"
-        self.__period=period
-        self.__stream=deque()
-        self.__value=None
+        self.period=period
+        self.stream=deque()
+        self.value=None
 
     def getLastValue(self):
         return self.__value
 
-    def __call__(self, n):
-        self.__stream.append(n)
-        if len(self.__stream) > self.__period:
-            self.__stream.popleft()
-            self.__value=sum(self.__stream) / float(len(self.__stream))
-            return self.__value
+    def __call__(self, number):
+
+        self.stream.append(number)
+        if len(self.stream) > self.period:
+            self.stream.popleft()
+            self.value=sum(self.stream) / float(len(self.stream))
+            return self.value
         else:
             return None
 
