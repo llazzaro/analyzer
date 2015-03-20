@@ -5,3 +5,6 @@
 /docs/_build/
 django_scheduler.egg-info
 .coverage
+dist
+build
+ultrafinance.egg-info
