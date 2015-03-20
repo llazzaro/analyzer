@@ -12,6 +12,7 @@ from ultrafinance.backTest.tickSubscriber.strategies.zscoreMomentumPortfolioStra
 
 from ultrafinance.lib.errors import Errors, UfException
 
+
 class StrategyFactory(object):
     ''' Strategy factory '''
     STRATEGY_DICT = {'period': PeriodStrategy,

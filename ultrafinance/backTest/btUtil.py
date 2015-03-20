@@ -8,6 +8,7 @@ import re
 OUTPUT_PREFIX = 'output'
 OUTPUT_FIELDS = ['placedOrder', 'accountValue', 'executedOrder']
 
+
 def findInListbyRe(itemList, reString):
     ''' find items in list by re '''
     items = []

@@ -6,6 +6,7 @@ Created on May 26, 2012
 import logging
 LOG = logging.getLogger()
 
+
 class IndexHelper(object):
     ''' helper class providing index info '''
 

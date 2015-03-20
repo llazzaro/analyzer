@@ -9,23 +9,24 @@ from ultrafinance.lib.errors import Errors, UfException
 from ultrafinance.backTest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
 
 import logging
-LOG = logging.getLogger()
+LOG=logging.getLogger()
+
 
 class BaseStrategy(TickSubsriber):
     ''' trading center '''
-    __meta__ = abc.ABCMeta
+    __meta__=abc.ABCMeta
 
     def __init__(self, name):
         ''' constructor '''
         super(BaseStrategy, self).__init__(name)
-        self.accountId = None
-        self.tradingEngine = None
-        self.configDict = {}
-        self.symbols = []
-        self.__curTime = ''
-        self.indexHelper = None
-        self.history = None
-        self.accountManager = None
+        self.accountId=None
+        self.tradingEngine=None
+        self.configDict={}
+        self.symbols=[]
+        self.__curTime=''
+        self.indexHelper=None
+        self.history=None
+        self.accountManager=None
 
 
     def subRules(self):
@@ -45,7 +46,7 @@ class BaseStrategy(TickSubsriber):
 
     def placeOrder(self, order):
         ''' place order and keep record'''
-        orderId = self.tradingEngine.placeOrder(order)
+        orderId=self.tradingEngine.placeOrder(order)
 
         return orderId
 
@@ -59,7 +60,7 @@ class BaseStrategy(TickSubsriber):
             raise UfException(Errors.INVALID_SYMBOLS,
                               "symbols %s is not a list" % symbols)
 
-        self.symbols = symbols
+        self.symbols=symbols
 
     def getAccountCopy(self):
         ''' get copy of account info '''

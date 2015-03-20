@@ -9,6 +9,7 @@ from ultrafinance.designPattern.singleton import Singleton
 import logging
 LOG = logging.getLogger()
 
+
 class StateSaverFactory(Singleton):
     ''' factory for output saver '''
     @staticmethod

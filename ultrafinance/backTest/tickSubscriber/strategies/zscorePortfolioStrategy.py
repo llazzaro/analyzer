@@ -19,21 +19,22 @@ from ultrafinance.backTest.constant import CONF_START_TRADE_DATE, CONF_BUYING_RA
 import math
 
 import logging
-LOG = logging.getLogger()
+LOG=logging.getLogger()
+
 
 class ZscorePortfolioStrategy(BaseStrategy):
     ''' period strategy '''
     def __init__(self, configDict):
         ''' constructor '''
         super(ZscorePortfolioStrategy, self).__init__("zscorePortfolioStrategy")
-        self.__trakers = {}
-        self.startDate = int(configDict.get(CONF_START_TRADE_DATE))
-        self.buyingRatio = int(configDict.get(CONF_BUYING_RATIO) if CONF_BUYING_RATIO in configDict else 2)
+        self.__trakers={}
+        self.startDate=int(configDict.get(CONF_START_TRADE_DATE))
+        self.buyingRatio=int(configDict.get(CONF_BUYING_RATIO) if CONF_BUYING_RATIO in configDict else 2)
 
     def __setUpTrakers(self):
         ''' set symbols '''
         for symbol in self.symbols:
-            self.__trakers[symbol] = OneTraker(symbol, self, self.buyingRatio)
+            self.__trakers[symbol]=OneTraker(symbol, self, self.buyingRatio)
 
     def orderExecuted(self, orderDict):
         ''' call back for executed order '''
@@ -50,28 +51,28 @@ class ZscorePortfolioStrategy(BaseStrategy):
             if symbol in self.__trakers:
                 self.__trakers[symbol].tickUpdate(tick)
 
+
 class OneTraker(object):
     ''' tracker for one stock '''
     def __init__(self, symbol, strategy, buyingRatio):
         ''' constructor '''
-        self.__symbol = symbol
-        self.__strategy = strategy
-        self.__startDate = strategy.startDate
-        self.__buyingRatio = buyingRatio
-        self.__buyThreshold = -2
-        self.__sellThreshold = 0.5
-        self.__priceZscore = ZScore(120)
-        self.__volumeZscore = ZScore(120)
-        self.__toSell = False
-        self.__toBuy = False
+        self.__symbol=symbol
+        self.__strategy=strategy
+        self.__startDate=strategy.startDate
+        self.__buyingRatio=buyingRatio
+        self.__buyThreshold=-2
+        self.__sellThreshold=0.5
+        self.__priceZscore=ZScore(120)
+        self.__volumeZscore=ZScore(120)
+        self.__toSell=False
+        self.__toBuy=False
 
         # order id
-        self.__position = 0
-
+        self.__position=0
 
     def __getCashToBuyStock(self):
         ''' calculate the amount of money to buy stock '''
-        account = self.__strategy.getAccountCopy()
+        account=self.__strategy.getAccountCopy()
 
         if (account.buyingPower >= account.getTotalValue() / self.__buyingRatio):
             return account.getTotalValue() / self.__buyingRatio
@@ -80,33 +81,32 @@ class OneTraker(object):
 
     def __placeBuyOrder(self, tick):
         ''' place buy order'''
-        cash = self.__getCashToBuyStock()
+        cash=self.__getCashToBuyStock()
         if cash == 0 or self.__position > 0:
             return
 
-        share = math.floor(cash / float(tick.close)) - self.__position
-        order = Order(accountId = self.__strategy.accountId,
-                         action = Action.BUY,
-                         type = Type.MARKET,
-                         symbol = self.__symbol,
-                         share = share)
+        share=math.floor(cash / float(tick.close)) - self.__position
+        order=Order(accountId=self.__strategy.accountId,
+                         action=Action.BUY,
+                         type=Type.MARKET,
+                         symbol=self.__symbol,
+                         share=share)
         if self.__strategy.placeOrder(order):
-            self.__position = math.floor(cash / float(tick.close))
+            self.__position=math.floor(cash / float(tick.close))
 
     def __placeSellOrder(self, tick):
         ''' place sell order '''
         if self.__position < 0:
             return
 
-        share = self.__position
-        order = Order(accountId = self.__strategy.accountId,
-                         action = Action.SELL,
-                         type = Type.MARKET,
-                         symbol = self.__symbol,
-                         share = -share)
+        share=self.__position
+        order=Order(accountId=self.__strategy.accountId,
+                         action=Action.SELL,
+                         type=Type.MARKET,
+                         symbol=self.__symbol,
+                         share=-share)
         if self.__strategy.placeOrder(order):
-            self.__position = 0
-
+            self.__position=0
 
     def orderExecuted(self, orderId):
         ''' call back for executed order '''
@@ -127,8 +127,8 @@ class OneTraker(object):
             return
 
         # get zscore
-        priceZscore = self.__priceZscore.getLastValue()
-        volumeZscore = self.__volumeZscore.getLastValue()
+        priceZscore=self.__priceZscore.getLastValue()
+        volumeZscore=self.__volumeZscore.getLastValue()
         if priceZscore is None or volumeZscore is None:
             return
 
@@ -140,17 +140,17 @@ class OneTraker(object):
         """
         if self.__toBuy:
             self.__placeBuyOrder(tick)
-            self.__toBuy = False
+            self.__toBuy=False
             return
 
         if self.__toSell:
             self.__placeSellOrder(tick)
-            self.__toSell = False
+            self.__toSell=False
             return
 
         if priceZscore < (-self.__threshold) and not self.__buyOrder and abs(volumeZscore) > 1.5:
-            self.__toBuy = True
+            self.__toBuy=True
 
         elif self.__buyOrder and priceZscore > 0.5:
-            self.__toSell = True
+            self.__toSell=True
         """

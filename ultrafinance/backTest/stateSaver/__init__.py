@@ -9,6 +9,7 @@ import abc
 import logging
 LOG = logging.getLogger()
 
+
 class StateSaver(object):
     ''' state saver '''
     __metaclass__ = abc.ABCMeta

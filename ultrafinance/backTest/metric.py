@@ -6,6 +6,7 @@ Created on Apr 29, 2012
 import abc
 from ultrafinance.pyTaLib.indicator import stddev, sharpeRatio, mean, rsquared
 
+
 class BaseMetric(object):
     ''' base metric class '''
     __metaclass__ = abc.ABCMeta
@@ -19,6 +20,7 @@ class BaseMetric(object):
     def formatResult(self):
         ''' print result '''
         return
+
 
 class BasicMetric(BaseMetric):
     ''' basic metrics '''
@@ -36,12 +38,12 @@ class BasicMetric(BaseMetric):
         super(BasicMetric, self).__init__()
         self.result = {BasicMetric.MAX_TIME_VALUE: (None, -1),
                        BasicMetric.MIN_TIME_VALUE: (None, -1),
-                       BasicMetric.STDDEV:-1,
-                       BasicMetric.SRATIO:-1,
-                       BasicMetric.R_SQUARED:-1,
-                       BasicMetric.START_TIME:-1,
-                       BasicMetric.END_TIME:-1,
-                       BasicMetric.END_VALUE:-1}
+                       BasicMetric.STDDEV: -1,
+                       BasicMetric.SRATIO: -1,
+                       BasicMetric.R_SQUARED: -1,
+                       BasicMetric.START_TIME: -1,
+                       BasicMetric.END_TIME: -1,
+                       BasicMetric.END_VALUE: -1}
 
     def calculate(self, timePositions, iTimePositionDict):
         ''' calculate basic metrics '''
@@ -85,6 +87,7 @@ class BasicMetric(BaseMetric):
              self.result[BasicMetric.MAX_DRAW_DOWN][1], self.result[BaseMetric.MAX_DRAW_DOWN][0],
              self.result[BasicMetric.SRATIO], self.result[BasicMetric.R_SQUARED])
 
+
 class MetricManager(object):
     ''' TODO: make it more generic for more metrics '''
     def __init__(self):
@@ -109,11 +112,11 @@ class MetricManager(object):
         for symbols, metric in self.__calculated.items():
             output.append("%s: %s" % (symbols, metric.formatResult()))
 
-            if bestSymbol == None or metric.result[BasicMetric.END_VALUE] > bestMetric.result[BasicMetric.END_VALUE]:
+            if bestSymbol is None or metric.result[BasicMetric.END_VALUE] > bestMetric.result[BasicMetric.END_VALUE]:
                 bestSymbol = symbols
                 bestMetric = metric
 
-            if worstSymbol == None or metric.result[BasicMetric.END_VALUE] < worstMetric.result[BasicMetric.END_VALUE]:
+            if worstSymbol is None or metric.result[BasicMetric.END_VALUE] < worstMetric.result[BasicMetric.END_VALUE]:
                 worstSymbol = symbols
                 worstMetric = metric
 

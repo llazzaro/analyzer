@@ -6,6 +6,7 @@ Created on May 26, 2012
 import logging
 LOG = logging.getLogger()
 
+
 class History(object):
     ''' helper class providing history info '''
     INDEX = "I"

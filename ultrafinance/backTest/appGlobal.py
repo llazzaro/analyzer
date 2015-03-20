@@ -6,10 +6,10 @@ Created on Jan 24, 2012
 
 from ultrafinance.designPattern.singleton import Singleton
 
+
 class AppGlobal(dict, Singleton):
     ''' appGlobal class '''
     def __init__(self):
         super(AppGlobal, self).__init__()
 
-appGlobal = AppGlobal.getInstance()
-
+appGlobal=AppGlobal.getInstance()
