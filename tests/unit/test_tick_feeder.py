@@ -12,6 +12,7 @@ from ultrafinance.model import Tick
 from ultrafinance.backTest.tickFeeder import TickFeeder
 from ultrafinance.lib.errors import UfException
 
+
 class testTickFeeder(unittest.TestCase):
     def setUp(self):
         self.mock = mox.Mox()
@@ -58,7 +59,6 @@ class testTickFeeder(unittest.TestCase):
 
         print(symbols)
 
-
     def testValidate_Exception(self):
         sub = self.mock.CreateMock(TickSubsriber)
         sub.subRules().AndReturn(['s3', 'mockRule'])
@@ -83,7 +83,7 @@ class testTickFeeder(unittest.TestCase):
 
         subs = tf.getSubs()
         print(subs)
-        self.assertEquals({sub: {'symbols': ['s1'], 'fail': 0} },
+        self.assertEquals({sub: {'symbols': ['s1'], 'fail': 0}},
                           subs)
 
     def testRegister_Exception(self):
@@ -133,7 +133,6 @@ class testTickFeeder(unittest.TestCase):
                            'time2': {'s1': tickTime2Dam1, 's2': tickTime2Dam2}},
                            timeTicks)
 
-
     def testIndexTicks_tick(self):
         tickTime1Dam1 = Tick('time1', 'open1', 'high1', 'low1', 'close1', 'volume1')
         tickTime2Dam1 = Tick('time2', 'open2', 'high2', 'low2', 'close2', 'volume2')
@@ -160,8 +159,10 @@ class testTickFeeder(unittest.TestCase):
                            timeTicks)
 
     def testPubTicks(self):
+        import ipdb
+        ipdb.set_trace()
         sub = self.mock.CreateMock(TickSubsriber)
-        sub.runConsume(['ticks'])
+        sub.preConsume(['ticks'])
 
         tf = TickFeeder()
         self.mock.ReplayAll()
