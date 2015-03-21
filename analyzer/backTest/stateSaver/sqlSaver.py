@@ -3,13 +3,13 @@ Created on Mar 1, 2011
 
 @author: ppa
 '''
-from ultrafinance.backTest.stateSaver import StateSaver
-from ultrafinance.model import Order
+from analyzer.backTest.stateSaver import StateSaver
+from analyzer.model import Order
 
 from sqlalchemy import Table, Column, Integer, String, create_engine, MetaData, and_, select
 from sqlalchemy.ext.declarative import declarative_base
 
-from ultrafinance.backTest.constant import (
+from analyzer.backTest.constant import (
     STATE_SAVER_HOLDING_VALUE,
     STATE_SAVER_INDEX_PRICE,
     STATE_SAVER_UPDATED_ORDERS,

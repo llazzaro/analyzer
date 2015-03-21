@@ -4,13 +4,13 @@ Created on Dec 26, 2011
 @author: ppa
 '''
 
-from ultrafinance.backTest.tickSubscriber.strategies.periodStrategy import PeriodStrategy
-from ultrafinance.backTest.tickSubscriber.strategies.smaStrategy import SMAStrategy
-from ultrafinance.backTest.tickSubscriber.strategies.smaPortfolioStrategy import SMAPortfolioStrategy
-from ultrafinance.backTest.tickSubscriber.strategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
-from ultrafinance.backTest.tickSubscriber.strategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
+from analyzer.backTest.tickSubscriber.strategies.periodStrategy import PeriodStrategy
+from analyzer.backTest.tickSubscriber.strategies.smaStrategy import SMAStrategy
+from analyzer.backTest.tickSubscriber.strategies.smaPortfolioStrategy import SMAPortfolioStrategy
+from analyzer.backTest.tickSubscriber.strategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
+from analyzer.backTest.tickSubscriber.strategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
 
-from ultrafinance.lib.errors import Errors, UfException
+from analyzer.lib.errors import Errors, UfException
 
 
 class StrategyFactory(object):

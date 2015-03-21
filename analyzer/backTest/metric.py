@@ -4,7 +4,7 @@ Created on Apr 29, 2012
 @author: ppa
 '''
 import abc
-from ultrafinance.pyTaLib.indicator import stddev, sharpeRatio, mean, rsquared
+from analyzer.pyTaLib.indicator import stddev, sharpeRatio, mean, rsquared
 
 
 class BaseMetric(object):

@@ -4,8 +4,8 @@ Created on Jan 08, 2012
 @author: ppa
 '''
 import unittest
-from ultrafinance.backTest.account import Account
-from ultrafinance.model import Order, Side, Quote
+from analyzer.backTest.account import Account
+from analyzer.model import Order, Side, Quote
 
 
 class testAccount(unittest.TestCase):

@@ -3,9 +3,9 @@ Created on Dec 25, 2011
 
 @author: ppa
 '''
-from ultrafinance.model import Type, Action, Order
-from ultrafinance.backTest.tickSubscriber.strategies.baseStrategy import BaseStrategy
-from ultrafinance.backTest.constant import CONF_STRATEGY_PERIOD, CONF_INIT_CASH
+from analyzer.model import Type, Action, Order
+from analyzer.backTest.tickSubscriber.strategies.baseStrategy import BaseStrategy
+from analyzer.backTest.constant import CONF_STRATEGY_PERIOD, CONF_INIT_CASH
 
 import logging
 LOG=logging.getLogger()

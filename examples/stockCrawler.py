@@ -3,7 +3,7 @@ Created on Dec 4, 2011
 
 @author: ppa
 '''
-from ultrafinance.module.googleCrawler import GoogleCrawler
+from analyzer.module.googleCrawler import GoogleCrawler
 
 from os import path
 import datetime

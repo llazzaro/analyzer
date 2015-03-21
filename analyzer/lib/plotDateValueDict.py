@@ -5,7 +5,7 @@ Created on Jan 3, 2011
 '''
 from matplotlib import pyplot
 from datetime import datetime
-from ultrafinance.lib.errors import UfException, Errors
+from analyzer.lib.errors import UfException, Errors
 
 import logging
 LOG=logging.getLogger()

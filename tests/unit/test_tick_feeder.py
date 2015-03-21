@@ -5,12 +5,12 @@ Created on Jan 18, 2011
 '''
 import mox
 import unittest
-from ultrafinance.backTest.tickSubscriber import TickSubsriber
-from ultrafinance.dam.baseDAM import BaseDAM
-from ultrafinance.model import Tick
+from analyzer.backTest.tickSubscriber import TickSubsriber
+from analyzer.dam.baseDAM import BaseDAM
+from analyzer.model import Tick
 
-from ultrafinance.backTest.tickFeeder import TickFeeder
-from ultrafinance.lib.errors import UfException
+from analyzer.backTest.tickFeeder import TickFeeder
+from analyzer.lib.errors import UfException
 
 
 class testTickFeeder(unittest.TestCase):

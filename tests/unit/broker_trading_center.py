@@ -4,10 +4,10 @@ Created on Dec 18, 2011
 @author: ppa
 '''
 import unittest
-from ultrafinance.backTest.tradingCenter import TradingCenter
-from ultrafinance.model import Tick, Order, Side
-from ultrafinance.backTest.account import Account
-from ultrafinance.lib.errors import UfException
+from analyzer.backTest.tradingCenter import TradingCenter
+from analyzer.model import Tick, Order, Side
+from analyzer.backTest.account import Account
+from analyzer.lib.errors import UfException
 import mox
 
 class testTradingCenter(unittest.TestCase):

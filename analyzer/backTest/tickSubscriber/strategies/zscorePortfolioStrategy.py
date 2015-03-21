@@ -12,10 +12,10 @@ When to Sell/Buy to cover:
 
 @author: ppa
 '''
-from ultrafinance.model import Type, Action, Order
-from ultrafinance.backTest.tickSubscriber.strategies.baseStrategy import BaseStrategy
-from ultrafinance.pyTaLib.indicator import ZScore
-from ultrafinance.backTest.constant import CONF_START_TRADE_DATE, CONF_BUYING_RATIO
+from analyzer.model import Type, Action, Order
+from analyzer.backTest.tickSubscriber.strategies.baseStrategy import BaseStrategy
+from analyzer.pyTaLib.indicator import ZScore
+from analyzer.backTest.constant import CONF_START_TRADE_DATE, CONF_BUYING_RATIO
 import math
 
 import logging

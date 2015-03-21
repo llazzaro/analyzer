@@ -23,9 +23,9 @@ When to Buy:
 
 @author: ppa
 '''
-from ultrafinance.model import Type, Action, Order
-from ultrafinance.backTest.tickSubscriber.strategies.baseStrategy import BaseStrategy
-from ultrafinance.pyTaLib.indicator import Sma
+from analyzer.model import Type, Action, Order
+from analyzer.backTest.tickSubscriber.strategies.baseStrategy import BaseStrategy
+from analyzer.pyTaLib.indicator import Sma
 import math
 
 import logging

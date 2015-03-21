@@ -4,7 +4,7 @@ Created on Jan 24, 2012
 @author: ppa
 '''
 
-from ultrafinance.designPattern.singleton import Singleton
+from analyzer.designPattern.singleton import Singleton
 
 
 class AppGlobal(dict, Singleton):

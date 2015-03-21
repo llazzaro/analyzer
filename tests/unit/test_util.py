@@ -6,7 +6,7 @@ Created on Jan 08, 2012
 import unittest
 import os
 
-from ultrafinance.lib.util import capitalize, importClass
+from analyzer.lib.util import capitalize, importClass
 
 class Test_util(object):
     ''' test class for importClass test '''

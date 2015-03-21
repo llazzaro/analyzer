@@ -10,19 +10,19 @@ import logging
 import logging.config
 
 
-from ultrafinance.backTest.tickSubscriber.strategies.strategyFactory import StrategyFactory
-from ultrafinance.backTest.tradingCenter import TradingCenter
-from ultrafinance.backTest.tickFeeder import TickFeeder
-from ultrafinance.backTest.tradingEngine import TradingEngine
-from ultrafinance.backTest.accountManager import AccountManager
-from ultrafinance.ufConfig.pyConfig import PyConfig
-from ultrafinance.dam.DAMFactory import DAMFactory
-from ultrafinance.backTest.stateSaver.stateSaverFactory import StateSaverFactory
-from ultrafinance.backTest.appGlobal import appGlobal
-from ultrafinance.backTest.metric import MetricManager
-from ultrafinance.backTest.indexHelper import IndexHelper
-from ultrafinance.backTest.history import History
-from ultrafinance.backTest.constant import (
+from analyzer.backTest.tickSubscriber.strategies.strategyFactory import StrategyFactory
+from analyzer.backTest.tradingCenter import TradingCenter
+from analyzer.backTest.tickFeeder import TickFeeder
+from analyzer.backTest.tradingEngine import TradingEngine
+from analyzer.backTest.accountManager import AccountManager
+from analyzer.ufConfig.pyConfig import PyConfig
+from analyzer.dam.DAMFactory import DAMFactory
+from analyzer.backTest.stateSaver.stateSaverFactory import StateSaverFactory
+from analyzer.backTest.appGlobal import appGlobal
+from analyzer.backTest.metric import MetricManager
+from analyzer.backTest.indexHelper import IndexHelper
+from analyzer.backTest.history import History
+from analyzer.backTest.constant import (
     TRADE_TYPE,
     CONF_ULTRAFINANCE_SECTION,
     CONF_TRADE_TYPE,
@@ -37,7 +37,7 @@ from ultrafinance.backTest.constant import (
     CONF_OUTPUT_DB_PREFIX,
     CONF_STRATEGY_NAME
 )
-from ultrafinance.backTest.metric import BasicMetric
+from analyzer.backTest.metric import BasicMetric
 
 from threading import Thread
 

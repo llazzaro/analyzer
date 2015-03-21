@@ -4,9 +4,9 @@ Created on Dec 25, 2011
 @author: ppa
 '''
 import abc
-from ultrafinance.backTest.tickSubscriber import TickSubsriber
-from ultrafinance.lib.errors import Errors, UfException
-from ultrafinance.backTest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
+from analyzer.backTest.tickSubscriber import TickSubsriber
+from analyzer.lib.errors import Errors, UfException
+from analyzer.backTest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
 
 import logging
 LOG=logging.getLogger()

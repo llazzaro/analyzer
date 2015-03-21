@@ -5,7 +5,7 @@ Created on Aug 11, 2011
 '''
 import os
 import sys
-from ultrafinance.lib.googleFinance import GoogleFinance
+from analyzer.lib.googleFinance import GoogleFinance
 
 
 class StockPicker:

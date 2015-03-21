@@ -3,7 +3,7 @@ Created on Dec 3, 2011
 
 @author: ppa
 '''
-from ultrafinance.module.backTester import BackTester
+from analyzer.module.backTester import BackTester
 
 if __name__ == "__main__":
 

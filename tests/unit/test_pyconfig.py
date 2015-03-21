@@ -4,7 +4,7 @@ Created on Nov 30, 2011
 @author: ppa
 '''
 import unittest
-from ultrafinance.ufConfig.pyConfig import PyConfig
+from analyzer.ufConfig.pyConfig import PyConfig
 
 class testPyConfig(unittest.TestCase):
     def setUp(self):

@@ -5,7 +5,7 @@ Created on Nov 30, 2010
 '''
 import ConfigParser
 from os import path
-from ultrafinance.lib.errors import UfException, Errors
+from analyzer.lib.errors import UfException, Errors
 
 import logging
 LOG = logging.getLogger()

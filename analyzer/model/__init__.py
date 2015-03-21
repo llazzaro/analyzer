@@ -5,7 +5,7 @@ Created on Nov 6, 2011
 '''
 import json
 from collections import namedtuple
-from ultrafinance.lib.errors import UfException, Errors
+from analyzer.lib.errors import UfException, Errors
 
 # namedtuple are used to handle data getting from csv or internet
 TICK_FIELDS=['time', 'open', 'high', 'low', 'close', 'volume']

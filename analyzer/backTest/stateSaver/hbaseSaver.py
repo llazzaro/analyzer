@@ -3,9 +3,9 @@ Created on Nov 6, 2011
 
 @author: ppa
 '''
-from ultrafinance.lib.errors import Errors, UfException
-from ultrafinance.dam.hbaseLib import HBaseLib
-from ultrafinance.backTest.stateSaver import StateSaver
+from analyzer.lib.errors import Errors, UfException
+from analyzer.dam.hbaseLib import HBaseLib
+from analyzer.backTest.stateSaver import StateSaver
 from hbase.Hbase import Mutation, ColumnDescriptor
 
 import logging

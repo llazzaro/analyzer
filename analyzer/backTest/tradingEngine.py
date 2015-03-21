@@ -3,8 +3,8 @@ Created on Nov 6, 2011
 
 @author: ppa
 '''
-from ultrafinance.backTest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
-from ultrafinance.backTest.constant import STATE_SAVER_UPDATED_ORDERS, STATE_SAVER_PLACED_ORDERS
+from analyzer.backTest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
+from analyzer.backTest.constant import STATE_SAVER_UPDATED_ORDERS, STATE_SAVER_PLACED_ORDERS
 
 from threading import Thread
 from time import sleep

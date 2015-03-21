@@ -4,7 +4,7 @@ Created on Dec 18, 2011
 @author: ppa
 '''
 import unittest
-from ultrafinance.pyTaLib.indicator import Sma
+from analyzer.pyTaLib.indicator import Sma
 
 
 class testPyTaLib(unittest.TestCase):

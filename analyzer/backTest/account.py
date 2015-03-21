@@ -3,8 +3,8 @@ Created on Nov 6, 2011
 
 @author: ppa
 '''
-from ultrafinance.model import Type, Action
-from ultrafinance.lib.errors import Errors, UfException
+from analyzer.model import Type, Action
+from analyzer.lib.errors import Errors, UfException
 import uuid
 
 import logging
