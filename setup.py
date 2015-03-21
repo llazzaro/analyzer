@@ -6,9 +6,9 @@ Created on July 1, 2011
 from setuptools import setup
 from setupCommand import TestCommand, CleanCommand
 
-version = '1.0.1'
+version = '0.0.1'
 
-setup(name='ultrafinance',
+setup(name='ultrafinance2',
       version=version,
       description="python project for finance: realtime data collection, analyze, algorithmic trading",
       long_description="""""",
@@ -18,9 +18,9 @@ setup(name='ultrafinance',
           "License :: OSI Approved :: MIT License",
       ],
       keywords='python, Finance, Algorithm, Trading, Realtime, QuantLib, pydispather',
-      author='Pan',
-      author_email='panpandas@gmail.com',
-      url='http://code.google.com/p/ultra-finance/',
+      author='Leonardo Lazzaro (original author Pan)',
+      author_email='lazzarleonardo@gmail.com',
+      url='https://github.com/llazzaro/ultrafinance2',
       license='MIT',
 
       install_not_requires=[
@@ -30,7 +30,7 @@ setup(name='ultrafinance',
           'xlrd',
           'matplotlib>=1.1.0'
       ],
-      packages=['ultrafinance'],
+      packages=['ultrafinance2'],
       include_package_data=True,
       install_requires=[
           'scipy>=0.13.0',
