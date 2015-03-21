@@ -8,7 +8,7 @@ from setupCommand import TestCommand, CleanCommand
 
 version = '0.0.1'
 
-setup(name='ultrafinance2',
+setup(name='analyzer',
       version=version,
       description="python project for finance: realtime data collection, analyze, algorithmic trading",
       long_description="""""",
@@ -20,7 +20,7 @@ setup(name='ultrafinance2',
       keywords='python, Finance, Algorithm, Trading, Realtime, QuantLib, pydispather',
       author='Leonardo Lazzaro (original author Pan)',
       author_email='lazzarleonardo@gmail.com',
-      url='https://github.com/llazzaro/ultrafinance2',
+      url='https://github.com/llazzaro/analyzer',
       license='MIT',
 
       install_not_requires=[
@@ -30,7 +30,7 @@ setup(name='ultrafinance2',
           'xlrd',
           'matplotlib>=1.1.0'
       ],
-      packages=['ultrafinance2'],
+      packages=['analyzer'],
       include_package_data=True,
       install_requires=[
           'scipy>=0.13.0',
