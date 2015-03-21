@@ -16,7 +16,7 @@ from analyzer.backTest.tickFeeder import TickFeeder
 from analyzer.backTest.tradingEngine import TradingEngine
 from analyzer.backTest.accountManager import AccountManager
 from analyzer.ufConfig.pyConfig import PyConfig
-from analyzer.dam.DAMFactory import DAMFactory
+from analyzerdam.DAMFactory import DAMFactory
 from analyzer.backTest.stateSaver.stateSaverFactory import StateSaverFactory
 from analyzer.backTest.appGlobal import appGlobal
 from analyzer.backTest.metric import MetricManager

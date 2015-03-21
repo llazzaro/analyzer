@@ -4,7 +4,7 @@ Created on Nov 6, 2011
 @author: ppa
 '''
 from analyzer.lib.errors import Errors, UfException
-from analyzer.dam.hbaseLib import HBaseLib
+from analyzerdam.hbaseLib import HBaseLib
 from analyzer.backTest.stateSaver import StateSaver
 from hbase.Hbase import Mutation, ColumnDescriptor
 

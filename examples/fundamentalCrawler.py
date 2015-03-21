@@ -3,7 +3,7 @@ Created on Dec 4, 2011
 
 @author: ppa
 '''
-from analyzer.dam.DAMFactory import DAMFactory
+from analyzerdam.DAMFactory import DAMFactory
 from os import path
 import optparse
 

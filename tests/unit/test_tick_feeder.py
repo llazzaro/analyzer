@@ -6,7 +6,7 @@ Created on Jan 18, 2011
 import mox
 import unittest
 from analyzer.backTest.tickSubscriber import TickSubsriber
-from analyzer.dam.baseDAM import BaseDAM
+from analyzerdam.baseDAM import BaseDAM
 from analyzer.model import Tick
 
 from analyzer.backTest.tickFeeder import TickFeeder
