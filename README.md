@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/llazzaro/ultra-finance.svg)](https://travis-ci.org/llazzaro/ultra-finance)
 
-# pyStockAnalize
+# analyzer
 
 important: this project is a fork of the original https://github.com/panpanpandas/ultrafinance
 

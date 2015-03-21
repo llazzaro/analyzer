@@ -13,7 +13,6 @@ setup(name='analyzer',
       description="python project for finance: realtime data collection, analyze, algorithmic trading",
       long_description="""""",
       classifiers=[
-          "Development Status :: 1 - Beta",
           "Intended Audience :: Developers",
           "License :: OSI Approved :: MIT License",
       ],
