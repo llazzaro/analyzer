@@ -25,9 +25,8 @@ class testTickFeeder(unittest.TestCase):
         dam.symbol = 's1'
 
         tf = TickFeeder()
-        tf.addSource(dam)
+        tf.setDam(dam)
 
-        print(tf._TickFeeder__source)
         self.assertEquals({'s1': dam}, tf._TickFeeder__source)
 
     def testGetSymbolsByRe(self):
