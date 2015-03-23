@@ -8,13 +8,16 @@ import os
 
 from analyzer.lib.util import capitalize, importClass
 
+
 class Test_util(object):
     ''' test class for importClass test '''
     pass
 
+
 class Class1(object):
     ''' test class for importClass test '''
     pass
+
 
 class testUtil(unittest.TestCase):
     def setUp(self):

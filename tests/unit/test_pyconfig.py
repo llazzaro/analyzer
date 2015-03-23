@@ -6,6 +6,7 @@ Created on Nov 30, 2011
 import unittest
 from analyzer.ufConfig.pyConfig import PyConfig
 
+
 class testPyConfig(unittest.TestCase):
     def setUp(self):
         self.config = PyConfig()
