@@ -113,6 +113,7 @@ own risk.
 
 import threading
 
+
 class SingletonException(Exception):
     pass
 
@@ -120,10 +121,11 @@ _stSingletons = set()
 _lockForSingletons = threading.RLock()
 _lockForSingletonCreation = threading.RLock()
 
+
 def _createSingletonInstance(cls, lstArgs, dctKwArgs):
     _lockForSingletonCreation.acquire()
     try:
-        if cls._isInstantiated(): # some other thread got here first
+        if cls._isInstantiated():  # some other thread got here first
             return
 
         instance = cls.__new__(cls)
@@ -131,13 +133,14 @@ def _createSingletonInstance(cls, lstArgs, dctKwArgs):
             instance.__init__(*lstArgs, **dctKwArgs)
         except TypeError, e:
             if str(e).find('__init__() takes') != -1:
-                raise SingletonException, 'If the singleton requires __init__ args, supply them on first call to getInstance().'
+                raise SingletonException('If the singleton requires __init__ args, supply them on first call to getInstance().')
             else:
                 raise
         cls.cInstance = instance
         _addSingleton(cls)
     finally:
         _lockForSingletonCreation.release()
+
 
 def _addSingleton(cls):
     _lockForSingletons.acquire()
@@ -147,6 +150,7 @@ def _addSingleton(cls):
     finally:
         _lockForSingletons.release()
 
+
 def _removeSingleton(cls):
     _lockForSingletons.acquire()
     try:
@@ -155,14 +159,16 @@ def _removeSingleton(cls):
     finally:
         _lockForSingletons.release()
 
+
 class MetaSingleton(type):
     def __new__(self, strName, tupBases, dct):
-        if dct.has_key('__new__'):
-            raise SingletonException, 'Can not override __new__ in a Singleton'
+        if '__new__' in dct:
+            raise SingletonException('Can not override __new__ in a Singleton')
         return super(MetaSingleton, self).__new__(self, strName, tupBases, dct)
 
     def __call__(self, *lstArgs, **dictArgs):
-        raise SingletonException, 'Singletons may only be instantiated through getInstance()'
+        raise SingletonException('Singletons may only be instantiated through getInstance()')
+
 
 class Singleton(object):
     __metaclass__ = MetaSingleton
@@ -175,7 +181,7 @@ class Singleton(object):
         """
         if cls._isInstantiated():
             if (lstArgs or dctKwArgs) and not hasattr(cls, 'ignoreSubsequent'):
-                raise SingletonException, 'Singleton already instantiated, but getInstance() called with args.'
+                raise SingletonException('Singleton already instantiated, but getInstance() called with args.')
         else:
             _createSingletonInstance(cls, lstArgs, dctKwArgs)
 
@@ -213,6 +219,7 @@ class Singleton(object):
                 if issubclass(baseClass, Singleton):
                     baseClass._forgetClassInstanceReferenceForTesting()
     _forgetClassInstanceReferenceForTesting = classmethod(_forgetClassInstanceReferenceForTesting)
+
 
 def forgetAllSingletons():
     '''This is useful in tests, since it is hard to know which singletons need to be cleared to make a test work.'''

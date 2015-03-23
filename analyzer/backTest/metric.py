@@ -126,7 +126,6 @@ class MetricManager(object):
         output.append("Worst %s: %s" % (worstSymbol, worstMetric.formatResult()))
         return '\n'.join(output)
 
-
     def getMetrics(self):
         ''' get metrics '''
         return self.__calculated

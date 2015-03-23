@@ -3,8 +3,14 @@ Created on April 15, 2012
 
 @author: Bruno Franca
 '''
-from pandas import *
-from math import *
+from pandas import (
+    rolling_mean,
+    rolling_std,
+    rolling_sum,
+    ewma,
+    Series,
+    DataFrame,
+)
 
 
 #Moving Average

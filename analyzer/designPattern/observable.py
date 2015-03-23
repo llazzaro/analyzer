@@ -6,6 +6,8 @@ Created on July 31, 2011
 copyied from http://code.activestate.com/recipes/131499-observer-pattern/
 Not sure whether it's a good idea to remove observer class
 '''
+
+
 class Observable:
     ''' class for observer design pattern '''
     def __init__(self):

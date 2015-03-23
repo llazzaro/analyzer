@@ -37,7 +37,8 @@ setup(name='analyzer',
           'beautifulsoup4',
           'SQLAlchemy>=0.8',
           'mox',
-          'analyzerdam'
+          'analyzerdam',
+          'pandas',
       ],
       tests_require=[
           'xlrd',
