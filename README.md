@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/llazzaro/ultra-finance.svg)](https://travis-ci.org/llazzaro/ultra-finance)
+[![Build Status](https://travis-ci.org/llazzaro/analyzer.svg?branch=master)](https://travis-ci.org/llazzaro/analyzer)
 
 # analyzer
 
