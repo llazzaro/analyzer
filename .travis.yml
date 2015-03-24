@@ -1,8 +1,16 @@
 language: python
 python:
-  - "2.7"
-  - "3.4"
+  - 2.7
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - conda update --yes conda
 install:
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy pytest 
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION matplotlib nose dateutil 
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION pandas statsmodels pytables xlrd
   - pip install coveralls
   - pip install .
 script:
