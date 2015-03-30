@@ -2,6 +2,17 @@
 
 # analyzer
 
+Python project for real-time financial analyzing and backtesting trading strategies
+
 important: this project is a fork of the original https://github.com/panpanpandas/ultrafinance
 
-Python project for real-time financial data collection, analyzing &amp;&amp; backtesting trading strategies
+Note: this project is still non working since I deleted DAM and model! there is a lot of work pending
+
+Originally DAM and model was in the ultrafinance, but I want to have DAM more as plugins.
+Also since I already have a relation model for stock market I wanted to adapt it to this project.
+Moving this two as new project will maintain analyzer code small and it will be only used for real time analize.
+
+So Please also check this projects:
+
+ * Data Access https://github.com/llazzaro/analyzerdam 
+ * Model https://github.com/llazzaro/pystock
