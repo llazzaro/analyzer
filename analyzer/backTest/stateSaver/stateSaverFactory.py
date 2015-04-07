@@ -4,13 +4,12 @@ Created on Nov 6, 2011
 @author: ppa
 '''
 from analyzer.lib.errors import Errors, UfException
-from analyzer.designPattern.singleton import Singleton
 
 import logging
 LOG = logging.getLogger()
 
 
-class StateSaverFactory(Singleton):
+class StateSaverFactory(object):
     ''' factory for output saver '''
     @staticmethod
     def createStateSaver(name, setting):
