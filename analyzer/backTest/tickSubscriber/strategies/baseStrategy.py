@@ -4,7 +4,7 @@ Created on Dec 25, 2011
 @author: ppa
 '''
 import abc
-from analyzer.backTest.tickSubscriber import TickSubsriber
+from analyzer.backTest.tickSubscriber import TickSubscriber
 from analyzer.lib.errors import Errors, UfException
 from analyzer.backTest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
 
@@ -12,7 +12,7 @@ import logging
 LOG=logging.getLogger()
 
 
-class BaseStrategy(TickSubsriber):
+class BaseStrategy(TickSubscriber):
     ''' trading center '''
     __meta__=abc.ABCMeta
 

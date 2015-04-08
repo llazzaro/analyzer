@@ -8,7 +8,7 @@ import uuid
 import threading
 
 
-class TickSubsriber(object):
+class TickSubscriber(object):
     ''' tick subscriber '''
     __metaclass__ = abc.ABCMeta
 

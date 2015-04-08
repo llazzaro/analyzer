@@ -5,7 +5,7 @@ Created on Jan 18, 2011
 '''
 import mox
 import unittest
-from analyzer.backTest.tickSubscriber import TickSubsriber
+from analyzer.backTest.tickSubscriber import TickSubscriber
 from analyzerdam.baseDAM import BaseDAM
 from analyzer.model import Tick
 
@@ -46,7 +46,7 @@ class testTickFeeder(unittest.TestCase):
         self.assertEquals(set(symbols), set(['s1', 's11', 's2']))
 
     def testValidate_Normal(self):
-        sub = self.mock.CreateMock(TickSubsriber)
+        sub = self.mock.CreateMock(TickSubscriber)
         sub.subRules().AndReturn(['s1', 'mockRule'])
 
         tf = TickFeeder()
@@ -59,7 +59,7 @@ class testTickFeeder(unittest.TestCase):
         print(symbols)
 
     def testValidate_Exception(self):
-        sub = self.mock.CreateMock(TickSubsriber)
+        sub = self.mock.CreateMock(TickSubscriber)
         sub.subRules().AndReturn(['s3', 'mockRule'])
 
         tf = TickFeeder()
@@ -70,7 +70,7 @@ class testTickFeeder(unittest.TestCase):
         self.mock.VerifyAll()
 
     def testRegister_Normal(self):
-        sub = self.mock.CreateMock(TickSubsriber)
+        sub = self.mock.CreateMock(TickSubscriber)
         sub.subRules().AndReturn(['s1', 'mockRule'])
 
         tf = TickFeeder()
@@ -86,7 +86,7 @@ class testTickFeeder(unittest.TestCase):
                           subs)
 
     def testRegister_Exception(self):
-        sub = self.mock.CreateMock(TickSubsriber)
+        sub = self.mock.CreateMock(TickSubscriber)
         sub.subRules().AndReturn(['s3', 'mockRule'])
 
         tf = TickFeeder()
@@ -160,7 +160,7 @@ class testTickFeeder(unittest.TestCase):
     def testPubTicks(self):
         import ipdb
         ipdb.set_trace()
-        sub = self.mock.CreateMock(TickSubsriber)
+        sub = self.mock.CreateMock(TickSubscriber)
         sub.preConsume(['ticks'])
 
         tf = TickFeeder()

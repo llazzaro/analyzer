@@ -4,8 +4,8 @@ Created on Jan 08, 2012
 @author: ppa
 '''
 import unittest
-from analyzer.backTest.account import Account
-from analyzer.model import Order, Side, Quote
+from pyStock.models import Account
+from pyStock.models import Order, Side, Quote
 
 
 class testAccount(unittest.TestCase):
