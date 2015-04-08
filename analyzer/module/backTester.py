@@ -144,7 +144,7 @@ class TestRunner(object):
         self._setupTickFeeder()
         self._setupSaver()
 
-        #wire things together
+        # wire things together
         self._setupStrategy()
         self.__tickFeeder.tradingCenter = self.__tradingCenter
         self.__tradingEngine.tickProxy = self.__tickFeeder
@@ -194,24 +194,24 @@ class TestRunner(object):
         strategy.setSymbols(self.__symbols)
         strategy.history = self.__history
 
-        #associate account
+        # associate account
         self.__accountId = self.__accountManager.createAccount(self.__cash)
         strategy.accountId = self.__accountId
         strategy.accountManager = self.__accountManager
 
-        #register on trading engine
+        # register on trading engine
         strategy.tradingEngine = self.__tradingEngine
         self.__tradingEngine.register(strategy)
 
     def _execute(self):
         ''' run backtest '''
         LOG.info("Running backtest for %s" % self.__symbols)
-        #start trading engine
+        # start trading engine
         thread = Thread(target=self.__tradingEngine.runListener, args=())
         thread.setDaemon(False)
         thread.start()
 
-        #start tickFeeder
+        # start tickFeeder
         self.__tickFeeder.execute()
         self.__tickFeeder.complete()
 
@@ -221,7 +221,7 @@ class TestRunner(object):
             startTradeDate = int(startTradeDate)
             timePositions = [tp for tp in timePositions if tp[0] >= startTradeDate]
 
-        #get and save metrics
+        # get and save metrics
         result = self.__metricManager.calculate(self.__symbols, timePositions, self.__tickFeeder.iTimePositionDict)
         account = self.__accountManager.getAccount(self.__accountId)
         self.__saver.writeMetrics(result[BasicMetric.START_TIME],
@@ -234,7 +234,7 @@ class TestRunner(object):
                                   account.getTotalValue(),
                                   account.holdings)
 
-        #write to saver
+        # write to saver
         LOG.debug("Writing state to saver")
         self.__saver.commit()
 
@@ -256,7 +256,7 @@ class TestRunner(object):
         self._printResult()
 
 
-############Util function################################
+# ###########Util function################################
 def getBackTestResultDbName(symbols, strategyName, startTickDate, endTradeDate):
     ''' get table name for back test result'''
     return "%s__%s__%s__%s" % ('_'.join(symbols) if len(symbols) <= 1 else len(symbols), strategyName, startTickDate, endTradeDate if endTradeDate else "Now")

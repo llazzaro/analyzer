@@ -99,10 +99,10 @@ class testTickFeeder(unittest.TestCase):
     def testInputType(self):
         tf = TickFeeder()
 
-        #invalid type - test assignment
+        # invalid type - test assignment
         self.assertRaises(UfException, tf._TickFeeder__setInputType, 'adafsdf')
 
-        #valid type - test assignment
+        # valid type - test assignment
         tf.inputType = TickFeeder.TICK_TYPE
 
         self.assertEquals(TickFeeder.TICK_TYPE, tf.inputType)
@@ -170,6 +170,6 @@ class testTickFeeder(unittest.TestCase):
 
         print (thread)
 
-    #TODO, too lazy to write this one........
+    # TODO, too lazy to write this one........
     def testExecute(self):
         pass

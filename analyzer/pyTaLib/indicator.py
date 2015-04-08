@@ -22,7 +22,7 @@ def stddev(array):
 
 def sharpeRatio(array, n=252):
     ''' calculate sharpe ratio '''
-    #precheck
+    # precheck
     if (array is None or len(array) < 2 or n < 1):
         return -1
 
