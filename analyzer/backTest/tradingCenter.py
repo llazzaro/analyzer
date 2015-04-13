@@ -3,7 +3,7 @@ Created on Dec 18, 2011
 
 @author: ppa
 '''
-from analyzer.model import Action, Type, Order
+from analyzer.model import Order
 from analyzer.lib.errors import Errors, UfException
 import uuid
 import time
@@ -41,55 +41,6 @@ class TradingCenter(object):
         self.__placedOrder.clear()
 
         return placedOrder
-
-    def validateOrder(self, order, tick):
-        ''' validate an order '''
-        msg=None
-        account=self.accountManager.getAccount(order.accountId)
-        if account is None:
-            msg="Can't find account for order in validateOrder %s" % order
-        else:
-            msg=account.validate(order, tick)
-
-            #valid order with current market price
-            if msg is None and order.symbol in self.__lastTickDict:
-                closePrice=self.__lastTickDict[order.symbol].close
-                if Action.SELL == order.action and Type.STOP == order.type and order.price > closePrice:
-                    msg="Sell stop order price %s shouldn't be higher than market price %s" % (order.price, closePrice)
-
-                elif Action.BUY_TO_COVER == order.action and Type.STOP == order.type and order.price < closePrice:
-                    msg="Buy to cover stop order price %s shouldn't be higher than market price %s" % (order.price, closePrice)
-
-        return msg
-
-    def placeOrder(self, order):
-        ''' place an order '''
-        if order.orderId:
-            raise UfException(Errors.ORDER_TYPE_ERROR, 'OrderId already set: %s' % order.orderId)
-
-        msg=self.validateOrder(order, self.__lastTickDict.get(order.symbol))
-        if msg is None:
-            # generate a unique order id
-            order.orderId=uuid.uuid4()
-
-            # put order in list
-            if order.symbol not in self.__openOrders:
-                self.__openOrders[order.symbol]={}
-            self.__openOrders[order.symbol][order.orderId]=order
-
-            LOG.debug("Order placed %s" % order)
-
-            # TODO: REMOVE THIS, order should be checked and executed at next quote
-            if order.type != Type.STOP:
-                self.__checkAndExecuteOrder(order)
-
-            self.__placedOrder[order.orderId]=order
-
-            return order.orderId
-
-        else:
-            LOG.warn("Can't place order because %s" % msg)
-            return None
 
     def __generateId(self):
         ''' generate id '''
@@ -175,25 +126,4 @@ class TradingCenter(object):
 
     def isOrderMet(self, tick, order):
         ''' whether order can be execute or not '''
-        if Action.BUY == order.action:
-            if Type.MARKET == order.type:
-                return True
-            elif Type.LIMIT == order.type and float(tick.low) <= float(order.price):
-                return True
-        elif Action.SELL == order.action:
-            if Type.MARKET == order.type:
-                return True
-            elif Type.STOP == order.type and float(tick.low) <= float(order.price):
-                return True
-        elif Action.SELL_SHORT == order.action:
-            if Type.MARKET == order.type:
-                return True
-            elif Type.LIMIT == order.type and float(tick.high) >= float(order.price):
-                return True
-        elif Action.BUY_TO_COVER == order.action:
-            if Type.MARKET == order.type:
-                return True
-            elif Type.STOP == order.type and float(tick.high) >= float(order.price):
-                return True
-        else:
-            return False
+        return order.is_order_met(tick)

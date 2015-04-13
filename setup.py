@@ -6,7 +6,7 @@ Created on July 1, 2011
 from setuptools import setup
 from setupCommand import TestCommand, CleanCommand
 
-version = '0.0.1'
+version = '0.0.3'
 
 setup(name='analyzer',
       version=version,
@@ -39,6 +39,7 @@ setup(name='analyzer',
           'mox',
           'analyzerdam',
           'pandas',
+          'pyStock',
       ],
       tests_require=[
           'xlrd',
