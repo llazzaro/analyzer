@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/llazzaro/analyzer.svg?branch=master)](https://travis-ci.org/llazzaro/analyzer)
+[![Coverage Status](https://coveralls.io/repos/llazzaro/analyzer/badge.svg)](https://coveralls.io/r/llazzaro/analyzer)
 
 # analyzer
 
