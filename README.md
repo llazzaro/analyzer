@@ -16,3 +16,4 @@ So Please also check this projects:
 
  * Data Access https://github.com/llazzaro/analyzerdam 
  * Model https://github.com/llazzaro/pystock
+ * Strategies https://github.com/llazzaro/analyzerstrategies
