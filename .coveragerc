@@ -1,5 +1,5 @@
 [run]
-source = ultrafinance
+source = analyzer
 
 [report]
 omit = tests
