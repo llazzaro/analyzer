@@ -6,7 +6,7 @@ Created on July 1, 2011
 from setuptools import setup
 from setupCommand import TestCommand, CleanCommand
 
-version = '0.0.3'
+version = '0.0.4'
 
 setup(name='analyzer',
       version=version,
@@ -17,7 +17,7 @@ setup(name='analyzer',
           "License :: OSI Approved :: MIT License",
       ],
       keywords='python, Finance, Algorithm, Trading, Realtime, QuantLib, pydispather',
-      author='Leonardo Lazzaro (original author Pan)',
+      author='Leonardo Lazzaro',
       author_email='lazzarleonardo@gmail.com',
       url='https://github.com/llazzaro/analyzer',
       license='MIT',
@@ -44,6 +44,7 @@ setup(name='analyzer',
       tests_require=[
           'xlrd',
           'xlwt',
-          'matplotlib'
+          'matplotlib',
+          'coveralls'
       ],
       cmdclass={'test': TestCommand, 'clean': CleanCommand})
