@@ -26,43 +26,43 @@ class Errors(object):
     HBASE_CREATE_ERROR = 401
     HBASE_UPDATE_ERROR = 402
 
-    #type eroor
+    # type eroor
     SIDE_TYPE_ERROR = 500
     ORDER_TYPE_ERROR = 501
     TRANSITION_TYPE_ERROR = 502
 
-    #tickFeeder
+    # tickFeeder
     FEEDER_INVALID_ERROR = 600
     SYMBOL_EXIST = 601
     INVALID_TYPE = 602
     SYMBOL_NOT_IN_SOURCE = 604
     FEEDER_TIMEOUT = 605
 
-    #account error
+    # account error
     ORDER_INVALID_ERROR = 700
     MISSING_SYMBOL = 701
 
-    #excelLib error
+    # excelLib error
     SHEET_NAME_EXIST = 800
     SHEET_NAME_INVALID = 801
     INVALID_EXCEL_MODE = 802
 
-    #trading error
+    # trading error
     INVALID_ACCOUNT = 901
 
-    #metric
+    # metric
     INVALID_METRIC_NAME = 1001
     ACCOUNT_ALEADY_SET = 1002
     ACCOUNT_NOT_SET = 1003
     INVALID_RISK_FREE_RETURN = 1004
 
-    #strategy
+    # strategy
     INVALID_STRATEGY_NAME = 1200
     NONE_ACCOUNT_ID = 1201
     NONE_TRADING_CENTER = 1202
     INVALID_SYMBOLS = 1203
 
-    #outputSaver
+    # outputSaver
     TABLENAME_NOT_SET = 1300
     TABLENAME_ALREADY_SET = 1301
     INVALID_SAVER_NAME = 1302

@@ -3,7 +3,6 @@ Created on Dec 18, 2010
 
 @author: ppa
 '''
-import sys
 from bs4 import BeautifulSoup
 from datetime import datetime
 from datetime import timedelta
@@ -14,26 +13,6 @@ import logging
 LOG=logging.getLogger()
 
 googCSVDateformat="%d-%b-%y"
-
-
-def importClass(path, moduleName, className=None):
-    ''' dynamically import class '''
-    if not className:
-        className=capitalize(moduleName)
-    sys.path.append(path)
-
-    mod=__import__(moduleName)
-    return getattr(mod, className)
-
-
-def capitalize(inputString):
-    ''' capitalize first letter '''
-    if not inputString:
-        return inputString
-    elif 1 == len(inputString):
-        return inputString[0].upper()
-    else:
-        return inputString[0].upper() + inputString[1:]
 
 
 def deCapitalize(inputString):

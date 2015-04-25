@@ -6,7 +6,7 @@ Created on July 1, 2011
 from setuptools import setup
 from setupCommand import TestCommand, CleanCommand
 
-version = '0.0.4'
+version = '0.0.5'
 
 setup(name='analyzer',
       version=version,
