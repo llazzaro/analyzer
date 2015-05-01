@@ -11,19 +11,17 @@ import logging.config
 
 
 from analyzer.backtest.tickSubscriber.strategies.strategyFactory import StrategyFactory
-from analyzer.backtest.tradingCenter import TradingCenter
-from analyzer.backtest.tickFeeder import TickFeeder
-from analyzer.backtest.tradingEngine import TradingEngine
-from analyzer.backtest.accountManager import AccountManager
+from analyzer.backtest.trading_center import TradingCenter
+from analyzer.backtest.tick_feeder import TickFeeder
+from analyzer.backtest.trading_engine import TradingEngine
+from analyzer.backtest.account_manager import AccountManager
 from analyzer.ufConfig.pyConfig import PyConfig
 from analyzerdam.DAMFactory import DAMFactory
 from analyzer.backtest.stateSaver.stateSaverFactory import StateSaverFactory
-from analyzer.backtest.appGlobal import appGlobal
 from analyzer.backtest.metric import MetricManager
-from analyzer.backtest.indexHelper import IndexHelper
+from analyzer.backtest.index_helper import IndexHelper
 from analyzer.backtest.history import History
 from analyzer.backtest.constant import (
-    TRADE_TYPE,
     CONF_ULTRAFINANCE_SECTION,
     CONF_TRADE_TYPE,
     CONF_INIT_CASH,
@@ -46,6 +44,7 @@ LOG = logging.getLogger()
 
 class BackTester(object):
     ''' back testing '''
+
     def __init__(self, configFile, startTickDate=0, startTradeDate=0, endTradeDate=None, cash=150000, symbolLists=None):
         LOG.debug("Loading config from %s" % configFile)
         self.__config = PyConfig()
@@ -60,9 +59,12 @@ class BackTester(object):
         self.__endTradeDate = endTradeDate
         self.__firstSaver = None
 
+    @property
+    def trade_type(self):
+        return self.__config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_TRADE_TYPE)
+
     def setup(self):
         ''' setup '''
-        appGlobal[TRADE_TYPE] = self.__config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_TRADE_TYPE)
         self.__config.override(CONF_ULTRAFINANCE_SECTION, CONF_INIT_CASH, self.__cash)
         self.__config.override(CONF_ULTRAFINANCE_SECTION, CONF_START_TRADE_DATE, self.__startTradeDate)
         self.__config.override(CONF_ULTRAFINANCE_SECTION, CONF_END_TRADE_DATE, self.__endTradeDate)
@@ -79,7 +81,7 @@ class BackTester(object):
     def _runOneTest(self, symbols):
         ''' run one test '''
         LOG.debug("Running backtest for %s" % symbols)
-        runner = TestRunner(self.__config, self.__mCalculator, self.__accounts, symbols, self.__startTickDate, self.__endTradeDate, self.__cash)
+        runner = TestRunner(self.__config, self.__mCalculator, self.__accounts, symbols, self.__startTickDate, self.__endTradeDate, self.__cash, self.trade_type)
         runner.runTest()
 
     def _loadSymbols(self):
@@ -121,12 +123,13 @@ class BackTester(object):
 
 class TestRunner(object):
     ''' back testing '''
-    def __init__(self, config, metricManager, accounts, symbols, startTickDate, endTradeDate, cash):
+    def __init__(self, config, metricManager, accounts, symbols, startTickDate, endTradeDate, cash, trade_type):
+        self.trade_type = trade_type
         self.__accountManager = AccountManager()
         self.__accountId = None
         self.__startTickDate = startTickDate
         self.__endTradeDate = endTradeDate
-        self.__tickFeeder = TickFeeder(start=startTickDate, end=endTradeDate)
+        self.__tickFeeder = TickFeeder(start=startTickDate, end=endTradeDate, trade_type=trade_type)
         self.__tradingCenter = TradingCenter()
         self.__tradingEngine = TradingEngine()
         self.__indexHelper = IndexHelper()

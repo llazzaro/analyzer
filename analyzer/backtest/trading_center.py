@@ -3,12 +3,14 @@ Created on Dec 18, 2011
 
 @author: ppa
 '''
-from analyzer.model import Order
-from analyzer.lib.errors import Errors, UfException
 import uuid
 import time
 
 import logging
+
+from pyStock.models import Order
+from analyzer.lib.errors import Errors, UfException
+
 LOG=logging.getLogger()
 
 

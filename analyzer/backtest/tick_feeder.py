@@ -6,8 +6,7 @@ Created on Nov 6, 2011
 from analyzer.lib.errors import UfException, Errors
 from threading import Thread
 
-from analyzer.backtest.appGlobal import appGlobal
-from analyzer.backtest.constant import TRADE_TYPE, TICK, QUOTE
+from analyzer.backtest.constant import TICK, QUOTE
 from analyzer.backtest.constant import STATE_SAVER_INDEX_PRICE
 
 import traceback
@@ -22,7 +21,7 @@ class TickFeeder(object):
         threadMaxFails indicates how many times thread for a subscriber can timeout,
         if it exceeds, them unregister that subscriber
     '''
-    def __init__(self, intervalTimeout=2, start=0, end=None):
+    def __init__(self, intervalTimeout=2, start=0, end=None, trade_type=None):
         self.__subs={}  # securityIds: sub
         self.__symbols=[]
         self.__indexSymbol=None
@@ -35,6 +34,7 @@ class TickFeeder(object):
         self.__updatedTick=None
         self.timeTicksDict={}
         self.iTimePositionDict={}
+        self.trade_type=trade_type
 
     def getUpdatedTick(self):
         ''' return timeTickTuple with status changes '''
@@ -49,13 +49,13 @@ class TickFeeder(object):
     def _getSymbolTicksDict(self, symbols):
         ''' get ticks from one dam'''
         ticks=[]
-        if TICK == appGlobal[TRADE_TYPE]:
+        if TICK == self.trade_type:
             ticks=self.__dam.readBatchTupleTicks(symbols, self.start, self.end)
-        elif QUOTE == appGlobal[TRADE_TYPE]:
+        elif QUOTE == self.trade_type:
             ticks=self.__dam.readBatchTupleQuotes(symbols, self.start, self.end)
         else:
             raise UfException(Errors.INVALID_TYPE,
-                              'Type %s is not accepted' % appGlobal[TRADE_TYPE])
+                              'Type %s is not accepted' % self.trade_type)
 
         return ticks
 

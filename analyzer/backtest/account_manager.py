@@ -3,12 +3,13 @@ Created on Jan 29, 2011
 
 @author: ppa
 '''
+import copy
+import logging
+
 from pyStock.models import Account
 from analyzer.backtest.constant import STATE_SAVER_ACCOUNT, STATE_SAVER_HOLDING_VALUE
 
-import copy
 
-import logging
 LOG=logging.getLogger()
 
 
@@ -25,7 +26,10 @@ class AccountManager(object):
 
     def createAccount(self, cash, commission=0):
         ''' create account '''
-        account=Account(cash, commission)
+        raise NotImplementedError
+        account=Account()
+        # account.commission = commission
+        account.deposit(cash)
         self.__accounts[account.accountId]=account
         self.__accountPositions[account.accountId]=[]  # list contains tuple (time, position)
 
