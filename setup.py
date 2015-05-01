@@ -27,7 +27,9 @@ setup(name='analyzer',
           'pandas',
           'xlwt',
           'xlrd',
-          'matplotlib>=1.1.0'
+          'matplotlib>=1.1.0',
+          'analyzerdam>=0.1.0',
+          'analyzerstrategies>=0.1.0'
       ],
       packages=['analyzer'],
       include_package_data=True,

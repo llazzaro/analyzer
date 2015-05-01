@@ -3,7 +3,7 @@ Created on Dec 3, 2011
 
 @author: ppa
 '''
-from analyzer.module.backTester import BackTester
+from analyzer.module.backtester import BackTester
 
 if __name__ == "__main__":
 

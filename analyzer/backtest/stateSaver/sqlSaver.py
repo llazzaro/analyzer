@@ -3,11 +3,12 @@ Created on Mar 1, 2011
 
 @author: ppa
 '''
-from analyzer.backtest.stateSaver import StateSaver
-from analyzer.model import Order
-
-from sqlalchemy import Table, Column, Integer, String, create_engine, MetaData, and_, select
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Table, Column, Integer, String, create_engine, MetaData, and_, select
+
+from pyStock.models import Order
+from analyzer.backtest.stateSaver import StateSaver
+
 
 from analyzer.backtest.constant import (
     STATE_SAVER_HOLDING_VALUE,
