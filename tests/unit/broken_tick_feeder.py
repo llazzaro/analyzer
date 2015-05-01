@@ -5,11 +5,11 @@ Created on Jan 18, 2011
 '''
 import mox
 import unittest
-from analyzer.backTest.tickSubscriber import TickSubscriber
+from analyzer.backtest.tickSubscriber import TickSubscriber
 from analyzerdam.baseDAM import BaseDAM
 from analyzer.model import Tick
 
-from analyzer.backTest.tickFeeder import TickFeeder
+from analyzer.backtest.tickFeeder import TickFeeder
 from analyzer.lib.errors import UfException
 
 

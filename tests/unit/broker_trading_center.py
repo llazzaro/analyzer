@@ -4,9 +4,9 @@ Created on Dec 18, 2011
 @author: ppa
 '''
 import unittest
-from analyzer.backTest.tradingCenter import TradingCenter
+from analyzer.backtest.tradingCenter import TradingCenter
 from analyzer.model import Tick, Order, Side
-from analyzer.backTest.account import Account
+from analyzer.backtest.account import Account
 from analyzer.lib.errors import UfException
 import mox
 

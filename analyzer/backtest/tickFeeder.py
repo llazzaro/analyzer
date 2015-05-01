@@ -6,9 +6,9 @@ Created on Nov 6, 2011
 from analyzer.lib.errors import UfException, Errors
 from threading import Thread
 
-from analyzer.backTest.appGlobal import appGlobal
-from analyzer.backTest.constant import TRADE_TYPE, TICK, QUOTE
-from analyzer.backTest.constant import STATE_SAVER_INDEX_PRICE
+from analyzer.backtest.appGlobal import appGlobal
+from analyzer.backtest.constant import TRADE_TYPE, TICK, QUOTE
+from analyzer.backtest.constant import STATE_SAVER_INDEX_PRICE
 
 import traceback
 import time

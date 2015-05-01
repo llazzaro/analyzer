@@ -4,11 +4,11 @@ Created on Dec 26, 2011
 @author: ppa
 '''
 
-from analyzer.backTest.tickSubscriber.strategies.periodStrategy import PeriodStrategy
-from analyzer.backTest.tickSubscriber.strategies.smaStrategy import SMAStrategy
-from analyzer.backTest.tickSubscriber.strategies.smaPortfolioStrategy import SMAPortfolioStrategy
-from analyzer.backTest.tickSubscriber.strategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
-from analyzer.backTest.tickSubscriber.strategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
+from analyzer.backtest.tickSubscriber.strategies.periodStrategy import PeriodStrategy
+from analyzer.backtest.tickSubscriber.strategies.smaStrategy import SMAStrategy
+from analyzer.backtest.tickSubscriber.strategies.smaPortfolioStrategy import SMAPortfolioStrategy
+from analyzer.backtest.tickSubscriber.strategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
+from analyzer.backtest.tickSubscriber.strategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
 
 from analyzer.lib.errors import Errors, UfException
 

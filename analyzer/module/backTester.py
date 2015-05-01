@@ -10,19 +10,19 @@ import logging
 import logging.config
 
 
-from analyzer.backTest.tickSubscriber.strategies.strategyFactory import StrategyFactory
-from analyzer.backTest.tradingCenter import TradingCenter
-from analyzer.backTest.tickFeeder import TickFeeder
-from analyzer.backTest.tradingEngine import TradingEngine
-from analyzer.backTest.accountManager import AccountManager
+from analyzer.backtest.tickSubscriber.strategies.strategyFactory import StrategyFactory
+from analyzer.backtest.tradingCenter import TradingCenter
+from analyzer.backtest.tickFeeder import TickFeeder
+from analyzer.backtest.tradingEngine import TradingEngine
+from analyzer.backtest.accountManager import AccountManager
 from analyzer.ufConfig.pyConfig import PyConfig
 from analyzerdam.DAMFactory import DAMFactory
-from analyzer.backTest.stateSaver.stateSaverFactory import StateSaverFactory
-from analyzer.backTest.appGlobal import appGlobal
-from analyzer.backTest.metric import MetricManager
-from analyzer.backTest.indexHelper import IndexHelper
-from analyzer.backTest.history import History
-from analyzer.backTest.constant import (
+from analyzer.backtest.stateSaver.stateSaverFactory import StateSaverFactory
+from analyzer.backtest.appGlobal import appGlobal
+from analyzer.backtest.metric import MetricManager
+from analyzer.backtest.indexHelper import IndexHelper
+from analyzer.backtest.history import History
+from analyzer.backtest.constant import (
     TRADE_TYPE,
     CONF_ULTRAFINANCE_SECTION,
     CONF_TRADE_TYPE,
@@ -37,7 +37,7 @@ from analyzer.backTest.constant import (
     CONF_OUTPUT_DB_PREFIX,
     CONF_STRATEGY_NAME
 )
-from analyzer.backTest.metric import BasicMetric
+from analyzer.backtest.metric import BasicMetric
 
 from threading import Thread
 
@@ -262,7 +262,7 @@ def getBackTestResultDbName(symbols, strategyName, startTickDate, endTradeDate):
     return "%s__%s__%s__%s" % ('_'.join(symbols) if len(symbols) <= 1 else len(symbols), strategyName, startTickDate, endTradeDate if endTradeDate else "Now")
 
 if __name__ == "__main__":
-    backTester = BackTester("backtest_zscoreMomentumPortfolio.ini", startTickDate=19901010, startTradeDate=19901010, endTradeDate=20131010)
-    backTester.setup()
-    backTester.runTests()
-    backTester.printMetrics()
+    backtester = BackTester("backtest_zscoreMomentumPortfolio.ini", startTickDate=19901010, startTradeDate=19901010, endTradeDate=20131010)
+    backtester.setup()
+    backtester.runTests()
+    backtester.printMetrics()

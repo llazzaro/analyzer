@@ -4,7 +4,7 @@ Created on Jan 29, 2011
 @author: ppa
 '''
 from pyStock.models import Account
-from analyzer.backTest.constant import STATE_SAVER_ACCOUNT, STATE_SAVER_HOLDING_VALUE
+from analyzer.backtest.constant import STATE_SAVER_ACCOUNT, STATE_SAVER_HOLDING_VALUE
 
 import copy
 

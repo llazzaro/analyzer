@@ -4,9 +4,9 @@ Created on Dec 25, 2011
 @author: ppa
 '''
 import abc
-from analyzer.backTest.tickSubscriber import TickSubscriber
+from analyzer.backtest.tickSubscriber import TickSubscriber
 from analyzer.lib.errors import Errors, UfException
-from analyzer.backTest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
+from analyzer.backtest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
 
 import logging
 LOG=logging.getLogger()

@@ -15,7 +15,7 @@ class StateSaverFactory(object):
     def createStateSaver(name, setting):
         ''' create state saver '''
         if 'sql' == name:
-            from analyzer.backTest.stateSaver.sqlSaver import SqlSaver
+            from analyzer.backtest.stateSaver.sqlSaver import SqlSaver
             saver = SqlSaver()
         else:
             raise UfException(Errors.INVALID_SAVER_NAME,
