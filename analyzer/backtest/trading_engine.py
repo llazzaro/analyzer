@@ -3,25 +3,27 @@ Created on Nov 6, 2011
 
 @author: ppa
 '''
+import json
+import logging
+from time import sleep
+from threading import Thread
+from collections import defaultdict
+
 from analyzer.backtest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
 from analyzer.backtest.constant import STATE_SAVER_UPDATED_ORDERS, STATE_SAVER_PLACED_ORDERS
 
-from threading import Thread
-from time import sleep
-import json
 
-import logging
 LOG=logging.getLogger()
 
 
 class TradingEngine(object):
-    ''' constructor
+    '''
         no tick operation should take more that 0.5 second
         threadMaxFails indicates how many times thread for a subscriber can timeout,
         if it exceeds, them unregister that subscriber
     '''
     def __init__(self, threadTimeout=2, threadMaxFail=10):
-        self.__subs={}  # {'event': {sub: {symbols: sub} }
+        self.subs=defaultdict(dict)  # {'event': {sub: {symbols: sub} }
         self.tickProxy=None
         self.orderProxy=None
         self.saver=None
@@ -43,7 +45,7 @@ class TradingEngine(object):
             raise UfException(Errors.SYMBOL_NOT_IN_SOURCE,
                                "can't find any symbol with re %s in source %s" % (symbolRe, self.__source.keys()))
         '''
-        #TODO: validate rules
+        # TODO: validate rules
         return symbols, rules, sub
 
     def register(self, sub):
@@ -53,26 +55,23 @@ class TradingEngine(object):
         symbols, events, sub=self.validateSub(sub)
 
         for event in events:
-            if event not in self.__subs:
-                self.__subs[event]={}
-
-            self.__subs[event][sub]={'symbols': symbols, 'fail': 0}
+            self.subs[event][sub]={'symbols': symbols, 'fail': 0}
             LOG.debug('register %s with id %s to event %s, symbols %s'
                       % (sub.name, sub.subId, event, symbols))
 
     def unregister(self, sub):
         ''' unregister'''
-        for event, subDict in self.__subs.items():
+        for event, subDict in self.subs.items():
             if sub in subDict.keys():
-                del self.__subs[event][sub]
+                del self.subs[event][sub]
 
                 # remove whole subs[event] if it's empty
-                if not self.__subs[event]:
-                    del self.__subs[event]
+                if not self.subs[event]:
+                    del self.subs[event]
 
                 LOG.debug('unregister %s with id %s' % (sub.name, sub.subId))
 
-    #TODO: in real time trading, change this function
+    # TODO: in real time trading, change this function
     def runListener(self):
         ''' execute func '''
 
@@ -98,7 +97,7 @@ class TradingEngine(object):
                 if updatedOrderDict:
                     self._orderUpdate(updatedOrderDict)
 
-                #record order
+                # record order
                 if self.saver:
                     self.saver.write(self.__curTime, STATE_SAVER_UPDATED_ORDERS, json.dumps([str(order) for order in updatedOrderDict.values()]))
                     self.saver.write(self.__curTime, STATE_SAVER_PLACED_ORDERS, json.dumps([str(order) for order in placedOrderDict.values()]))
@@ -107,7 +106,7 @@ class TradingEngine(object):
 
     def _complete(self):
         ''' call when complete feeding ticks '''
-        for subDict in self.__subs.itervalues():
+        for subDict in self.subs.itervalues():
             for sub in subDict.iterkeys():
                 sub.complete()
 
@@ -139,7 +138,7 @@ class TradingEngine(object):
         order status changes
         '''
         event=EVENT_ORDER_EXECUTED
-        for sub, attrs in self.__subs[EVENT_ORDER_EXECUTED].items():
+        for sub, attrs in self.subs[EVENT_ORDER_EXECUTED].items():
             thread=self.consumeExecutedOrders(orderDict, sub, event)
             thread.join(timeout=self.__threadTimeout * 1000)
             if thread.isAlive():
@@ -153,14 +152,14 @@ class TradingEngine(object):
     def _tickUpdate(self, timeTicksTuple):
         ''' got tick update '''
         time, symbolTicksDict=timeTicksTuple
-        #TODO: remove hard coded event
-        #This should not happen
+        # TODO: remove hard coded event
+        # This should not happen
         event=EVENT_TICK_UPDATE
-        if event not in self.__subs:
-            LOG.warn("EVENT_TICK_UPDATE not in self.__subs %s" % self.__subs)
+        if event not in self.subs:
+            LOG.warn("EVENT_TICK_UPDATE not in self.subs %s" % self.subs)
             return
 
-        for sub, attrs in self.__subs[event].items():
+        for sub, attrs in self.subs[event].items():
             ticks={}
             for symbol in attrs['symbols']:
                 if symbol in symbolTicksDict:
