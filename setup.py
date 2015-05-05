@@ -40,7 +40,7 @@ setup(name='analyzer',
           'pandas',
           'pyStock',
           'analyzerdam>=0.1.0',
-          'analyzerstrategies>=0.1.0'
+          'analyzerstrategies>=0.1.2'
       ],
       tests_require=[
           'xlrd',
