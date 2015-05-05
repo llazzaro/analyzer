@@ -58,10 +58,10 @@ class TradingCenter(object):
             LOG.warn("Can't cancel order %s because there is no open orders for order id %s with symbol %s" % (orderId, orderId, symbol))
             return
 
-        #TODO cancel the order and update history
+        # TODO cancel the order and update history
         del self.__openOrders[symbol][orderId]
 
-        #if no open orders left for that symbol, remove it
+        # if no open orders left for that symbol, remove it
         if not len(self.__openOrders[symbol]):
             del self.__openOrders[symbol]
 
