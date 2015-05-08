@@ -27,14 +27,14 @@ class TradingEngine(object):
         self.tickProxy=None
         self.orderProxy=None
         self.saver=None
-        self.__threadTimeout=threadTimeout
-        self.__threadMaxFail=threadMaxFail
-        self.__curTime=""
-        self.__stop=False
+        self._threadTimeout=threadTimeout
+        self._threadMaxFail=threadMaxFail
+        self._curTime=""
+        self._stop=False
 
     def stop(self):
         ''' set stop flag '''
-        self.__stop=True
+        self._stop=True
 
     def validateSub(self, sub):
         ''' validate subscriber '''
@@ -43,7 +43,7 @@ class TradingEngine(object):
         '''
         if not symbols:
             raise UfException(Errors.SYMBOL_NOT_IN_SOURCE,
-                               "can't find any symbol with re %s in source %s" % (symbolRe, self.__source.keys()))
+                               "can't find any symbol with re %s in source %s" % (symbolRe, self._source.keys()))
         '''
         # TODO: validate rules
         return symbols, rules, sub
@@ -76,7 +76,7 @@ class TradingEngine(object):
         ''' execute func '''
 
         while True:
-            if self.__stop:
+            if self._stop:
                 LOG.debug("Stopping trading engine...")
                 self._complete()
                 break
@@ -89,7 +89,7 @@ class TradingEngine(object):
                     continue
 
                 if timeTicksTuple:
-                    self.__curTime=timeTicksTuple[0]
+                    self._curTime=timeTicksTuple[0]
                     self._tickUpdate(timeTicksTuple)
 
                 updatedOrderDict=self.orderProxy.getUpdatedOrder()
@@ -99,8 +99,8 @@ class TradingEngine(object):
 
                 # record order
                 if self.saver:
-                    self.saver.write(self.__curTime, STATE_SAVER_UPDATED_ORDERS, json.dumps([str(order) for order in updatedOrderDict.values()]))
-                    self.saver.write(self.__curTime, STATE_SAVER_PLACED_ORDERS, json.dumps([str(order) for order in placedOrderDict.values()]))
+                    self.saver.write(self._curTime, STATE_SAVER_UPDATED_ORDERS, json.dumps([str(order) for order in updatedOrderDict.values()]))
+                    self.saver.write(self._curTime, STATE_SAVER_PLACED_ORDERS, json.dumps([str(order) for order in placedOrderDict.values()]))
 
                 self.tickProxy.clearUpdateTick()
 
@@ -140,12 +140,12 @@ class TradingEngine(object):
         event=EVENT_ORDER_EXECUTED
         for sub, attrs in self.subs[EVENT_ORDER_EXECUTED].items():
             thread=self.consumeExecutedOrders(orderDict, sub, event)
-            thread.join(timeout=self.__threadTimeout * 1000)
+            thread.join(timeout=self._threadTimeout * 1000)
             if thread.isAlive():
                 LOG.error("Thread timeout for order update subId %s" % sub.subId)
                 attrs['fail'] += 1
 
-            if attrs['fail'] > self.__threadMaxFail:
+            if attrs['fail'] > self._threadMaxFail:
                 LOG.error("For order update, subId %s fails for too many times" % sub.subId)
                 self.unregister(sub)
 
@@ -166,15 +166,15 @@ class TradingEngine(object):
                     ticks[symbol]=symbolTicksDict[symbol]
 
             thread=self.consumeTicks(ticks, sub, event)
-            thread.join(timeout=self.__threadTimeout * 1000)
+            thread.join(timeout=self._threadTimeout * 1000)
             if thread.isAlive():
                 LOG.error("Thread timeout for tick update, subId %s at time %s" % (sub.subId, time))
                 attrs['fail'] += 1
 
-            if attrs['fail'] > self.__threadMaxFail:
+            if attrs['fail'] > self._threadMaxFail:
                 LOG.error("For tick update, subId %s fails for too many times" % sub.subId)
                 self.unregister(sub)
 
         if self.saver and len(symbolTicksDict) < 10:
             for symbol in symbolTicksDict:
-                self.saver.write(self.__curTime, symbol, str(symbolTicksDict[symbol]))
+                self.saver.write(self._curTime, symbol, str(symbolTicksDict[symbol]))
