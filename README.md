@@ -6,6 +6,10 @@
 
 [![Join the chat at https://gitter.im/llazzaro/analyzer](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/llazzaro/analyzer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+Donate bitcoins to this project.
+
+        BTC: 13BeXBBjM3PPtp8YvKFvgfXdqgZC19YX23
+
 Python project for real-time financial analyzing and backtesting trading strategies
 
 important: this project is a fork of the original https://github.com/panpanpandas/ultrafinance
