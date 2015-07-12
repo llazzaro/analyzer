@@ -8,7 +8,7 @@
 
 Donate bitcoins to this project.
 
-        BTC: 13BeXBBjM3PPtp8YvKFvgfXdqgZC19YX23
+        BTC: 1GeVxWa5jzLNwr4GfyNYEYgdrLc1r7tv76
 
 Python project for real-time financial analyzing and backtesting trading strategies
 
