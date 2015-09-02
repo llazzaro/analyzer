@@ -6,6 +6,7 @@ Created on Dec 18, 2011
 import unittest
 from analyzer.backtest.trading_center import TradingCenter
 from pyStock.models import (
+    Stock,
     Tick,
     BuyOrder,
     SellOrder,
@@ -53,91 +54,49 @@ class testTradingCenter(unittest.TestCase):
         self.assertEquals(True, tc.isOrderMet(tick1, order4))
 
     def testValidOrder(self):
-        tc=TradingCenter()
+        """
+            Order instantiation raises exception if it is not valid
+        """
 
-        accountId='accountId'
-        order1=BuyOrder(accountId=accountId, symbol='symbol', price=13.25, share=10)
-        order2=BuyOrder(accountId='unknowAccount', symbol='symbol', price=13.25, share=10)
-        account=self.mock.CreateMock(Account)
-        account.validate(order1).AndReturn(True)
-        account.validate(order1).AndReturn(False)
-        tc._TradingCenter__accounts={accountId: account}
+        account=Account()
+        unknown_acc=Account()
+        stock=Stock(symbol='symbol')
+        BuyOrder(account=account, security=stock, price=13.25, share=10)
+        BuyOrder(account=unknown_acc, security=stock, price=13.25, share=10)
 
-        self.mock.ReplayAll()
-        self.assertEquals(False, tc.validateOrder(order2))  # invalid account id
-        self.assertEquals(True, tc.validateOrder(order1))  # True
-        self.assertEquals(False, tc.validateOrder(order1))  # False
-        self.mock.VerifyAll()
-
-    def testPlaceOrder_existedOrder(self):
-        tc=TradingCenter()
-
-        accountId='accountId'
-        order1=BuyOrder(accountId=accountId, symbol='symbol', price=13.25, share=10, orderId='orderId1')
-        self.assertRaises(UfException, tc.placeOrder, order1)
-
-    def testPlaceOrder_invalidAccountId(self):
-        tc=TradingCenter()
-
-        order2=BuyOrder(accountId='unknowAccount', symbol='symbol', price=13.25, share=10)
-
-        self.mock.ReplayAll()
-        self.assertEquals(None, tc.placeOrder(order2))  # invalid account id
-        self.mock.VerifyAll()
-
-    def testPlaceOrder_OK(self):
-        tc=TradingCenter()
-
-        accountId='accountId'
-        order1=BuyOrder(accountId=accountId, symbol='symbol', price=13.25, share=10)
-        account=self.mock.CreateMock(Account)
-        account.validate(order1).AndReturn(True)
-        tc._TradingCenter__accounts={accountId: account}
-
-        self.mock.ReplayAll()
-        self.assertNotEquals(None, tc.placeOrder(order1))  # True
-        self.mock.VerifyAll()
-
-    def testPlaceOrder_failed(self):
-        tc=TradingCenter()
-
-        accountId='accountId'
-        order1=BuyOrder(accountId=accountId, symbol='symbol', price=13.25, share=10)
-        account=self.mock.CreateMock(Account)
-        account.validate(order1).AndReturn(False)
-        tc._TradingCenter__accounts={accountId: account}
-
-        self.mock.ReplayAll()
-        self.assertEquals(None, tc.placeOrder(order1))  # True
-        self.mock.VerifyAll()
-
-    def testGetOpenOrdersByOrderId(self):
-        order1=BuyOrder(accountId='accountId', symbol='symbol1', price=13.2, share=10, orderId='id1')
-        order2=BuyOrder(accountId='accountId', symbol='symbol1', price=13.25, share=10, orderId='id2')
+    def test_open_orders_by_order_id(self):
+        account = Account()
+        stock=Stock(symbol='symbol')
+        order1=BuyOrder(account=account, security=stock, price=13.2, share=10)
+        BuyOrder(account=account, security=stock, price=13.25, share=10)
 
         tc=TradingCenter()
-        tc._TradingCenter__openOrders={'symbol1': [order1, order2]}
-        order=tc.getOpenOrderByOrderId('id1')
+        order=tc.open_order_by_id(order1.id)
         self.assertEquals(order1, order)
 
-        order=tc.getOpenOrderByOrderId('id1sdfasdf')
+        order=tc.open_order_by_id(100)
         self.assertEquals(None, order)
 
     def testGetOpenOrdersBySymbol(self):
-        order1=BuyOrder(accountId='accountId', symbol='symbol1', price=13.2, share=10, orderId='id1')
-        order2=BuyOrder(accountId='accountId', symbol='symbol1', price=13.25, share=10, orderId='id2')
+
+        account = Account()
+        stock=Stock(symbol='symbol')
+        order1=BuyOrder(account=account, security=stock, price=13.2, share=10)
+        order2=BuyOrder(account=account, security=stock, price=13.25, share=10)
 
         tc=TradingCenter()
-        tc._TradingCenter__openOrders={'symbol1': [order1, order2]}
-        orders=tc.getOpenOrdersBySymbol('symbol1')
+        orders=tc.open_orders_by_symbol('symbol1')
         self.assertEquals([order1, order2], orders)
 
     def testCancelOrder(self):
-        order1=BuyOrder(accountId='accountId', symbol='symbol1', price=13.2, share=10, orderId='id1')
-        order2=BuyOrder(accountId='accountId', symbol='symbol1', price=13.25, share=10, orderId='id2')
+
+        account = Account()
+        stock=Stock(symbol='symbol')
+        order1=BuyOrder(account=account, symbol=stock, price=13.2, share=10)
+        order2=BuyOrder(account=account, symbol=stock, price=13.25, share=10)
+
 
         tc=TradingCenter()
-        tc._TradingCenter__openOrders={'symbol1': [order1, order2]}
 
         tc.cancelOrder('id1')
         print(tc._TradingCenter__openOrders)

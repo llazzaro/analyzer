@@ -3,7 +3,6 @@ Created on Dec 18, 2011
 
 @author: ppa
 '''
-import uuid
 import time
 
 import logging
@@ -22,13 +21,11 @@ class TradingCenter(object):
     def __init__(self):
         ''' constructor '''
         self.accountManager=None
-        self.__openOrders={}  # SAMPLE: {"EBAY": {orderId1: order1, orderId2: order2}}
-        self.__closedOrders={}  # SAMPLE {"EBAY": [order1, order2]}
         self.__updatedOrder={}  # SAMPLE {"EBAY": [order1, order2]}
         self.__placedOrder={}  # SAMPLE {"EBAY": [order1, order2]}
         self.__lastTickDict=None
 
-    def getUpdatedOrder(self):
+    def updated_order(self):
         ''' return orders with status changes '''
         updatedOrder={}
         updatedOrder.update(self.__updatedOrder)
@@ -36,7 +33,7 @@ class TradingCenter(object):
 
         return updatedOrder
 
-    def getPlacedOrder(self):
+    def placed_order(self):
         ''' return orders that has been placed '''
         placedOrder={}
         placedOrder.update(self.__placedOrder)
@@ -44,17 +41,13 @@ class TradingCenter(object):
 
         return placedOrder
 
-    def __generateId(self):
-        ''' generate id '''
-        return uuid.uuid4()
-
-    def cancelOrder(self, symbol, orderId):
+    def cancel_order(self, symbol, orderId):
         ''' cancel an order '''
         if symbol not in self.__openOrders:
             LOG.warn("Can't cancel order %s because there is no open orders for symbol %s" % (orderId, symbol))
             return
 
-        if orderId not in self.__openOrders[symbol]:
+        if orderId not in self.open_orders(symbol):
             LOG.warn("Can't cancel order %s because there is no open orders for order id %s with symbol %s" % (orderId, orderId, symbol))
             return
 
@@ -67,7 +60,7 @@ class TradingCenter(object):
 
         LOG.debug("Order canceled: %s" % orderId)
 
-    def cancelAllOpenOrders(self):
+    def cancel_all_open_orders(self):
         ''' cancel all open order '''
         for symbol, orderIdAndOrderDict in self.__openOrders.items():
             for orderId, order in orderIdAndOrderDict.values():
@@ -76,12 +69,12 @@ class TradingCenter(object):
 
             del self.__openOrders[symbol]
 
-    def consumeTicks(self, tickDict):
+    def consume_ticks(self, tickDict):
         ''' consume ticks '''
         self._checkAndExecuteOrders(tickDict)
         self.accountManager.updateAccountsPosition(tickDict)
 
-    def _checkAndExecuteOrders(self, tickDict):
+    def _check_and_execute_orders(self, tickDict):
         ''' check and execute open order '''
         self.__lastTickDict=tickDict
         for symbol, tick in tickDict.iteritems():
@@ -104,7 +97,7 @@ class TradingCenter(object):
         if self.isOrderMet(tick, order):
             self.__executeOrder(tick, order)
 
-    def __executeOrder(self, tick, order):
+    def __execute_order(self, tick, order):
         ''' execute an order '''
         account=self.accountManager.getAccount(order.accountId)
         if not account:
@@ -126,6 +119,9 @@ class TradingCenter(object):
             if not len(self.__openOrders[order.symbol]):
                 del self.__openOrders[order.symbol]
 
-    def isOrderMet(self, tick, order):
+    def is_order_met(self, tick, order):
         ''' whether order can be execute or not '''
         return order.is_order_met(tick)
+
+    def open_order_by_id(self, id):
+        raise NotImplementedError()
