@@ -30,16 +30,16 @@ class TickSubscriber(object):
         ''' get name '''
         return self.__name
 
-    def preConsume(self, ticks):
+    def pre_consume(self, ticks):
         ''' override function '''
         pass
 
     @abc.abstractmethod
-    def tickUpdate(self, ticks):
+    def tick_update(self, ticks):
         ''' consume ticks '''
         return
 
-    def orderExecuted(self, orderDict):
+    def order_executed(self, orderDict):
         ''' call back for executed order with order id, should be overridden '''
         return
 
@@ -48,7 +48,7 @@ class TickSubscriber(object):
         pass
 
     @abc.abstractmethod
-    def subRules(self):
+    def sub_rules(self):
         ''' call back from framework
             return (symbolRe, rules)
         '''

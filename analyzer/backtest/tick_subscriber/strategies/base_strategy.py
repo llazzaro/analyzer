@@ -4,7 +4,7 @@ Created on Dec 25, 2011
 @author: ppa
 '''
 import abc
-from analyzer.backtest.tickSubscriber import TickSubscriber
+from analyzer.backtest.tick_subscriber import TickSubscriber
 from analyzer.lib.errors import Errors, UfException
 from analyzer.backtest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
 
@@ -16,23 +16,28 @@ class BaseStrategy(TickSubscriber):
     ''' trading center '''
     __meta__=abc.ABCMeta
 
-    def __init__(self, name):
+    def __init__(self, name, symbols):
         ''' constructor '''
         super(BaseStrategy, self).__init__(name)
-        self.accountId=None
-        self.tradingEngine=None
-        self.configDict={}
-        self.symbols=[]
-        self.__curTime=''
-        self.indexHelper=None
+        self.account=None
+        self.trading_engine=None
+        self.config_dict={}
+        if list != type(symbols):
+            raise UfException(Errors.INVALID_SYMBOLS,
+                              "symbols %s is not a list" % symbols)
+
+        self.symbols=symbols
+        self.cur_time=''
+        self.index_helper=None
         self.history=None
-        self.accountManager=None
+        self.account_manager=None
 
     def subRules(self):
         ''' override function '''
         return (self.symbols, [EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED])
 
-    def checkReady(self):
+    @property
+    def ready(self):
         '''
         whether strategy has been set up and ready to run
         TODO: check trading engine
@@ -43,11 +48,11 @@ class BaseStrategy(TickSubscriber):
 
         return True
 
-    def placeOrder(self, order):
+    def place_order(self, order):
         ''' place order and keep record'''
-        orderId=self.tradingEngine.placeOrder(order)
+        order_id=self.trading_engine.place_order(order)
 
-        return orderId
+        return order_id
 
     def complete(self):
         ''' complete operation '''
@@ -55,12 +60,5 @@ class BaseStrategy(TickSubscriber):
 
     def setSymbols(self, symbols):
         '''set symbols '''
-        if list != type(symbols):
-            raise UfException(Errors.INVALID_SYMBOLS,
-                              "symbols %s is not a list" % symbols)
 
         self.symbols=symbols
-
-    def getAccountCopy(self):
-        ''' get copy of account info '''
-        return self.accountManager.getAccountCopy(self.accountId)
