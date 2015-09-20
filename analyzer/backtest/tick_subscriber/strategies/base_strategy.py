@@ -17,14 +17,10 @@ class BaseStrategy(TickSubscriber):
     __meta__=abc.ABCMeta
 
     def __init__(self, name, symbols):
-        ''' constructor '''
         super(BaseStrategy, self).__init__(name)
         self.account=None
         self.trading_engine=None
         self.config_dict={}
-        if list != type(symbols):
-            raise UfException(Errors.INVALID_SYMBOLS,
-                              "symbols %s is not a list" % symbols)
 
         self.symbols=symbols
         self.cur_time=''
@@ -32,7 +28,7 @@ class BaseStrategy(TickSubscriber):
         self.history=None
         self.account_manager=None
 
-    def subRules(self):
+    def sub_rules(self):
         ''' override function '''
         return (self.symbols, [EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED])
 
@@ -42,7 +38,7 @@ class BaseStrategy(TickSubscriber):
         whether strategy has been set up and ready to run
         TODO: check trading engine
         '''
-        if self.accountId is None:
+        if self.account is None:
             raise UfException(Errors.NONE_ACCOUNT_ID,
                               "Account id is none")
 
@@ -57,8 +53,3 @@ class BaseStrategy(TickSubscriber):
     def complete(self):
         ''' complete operation '''
         pass
-
-    def setSymbols(self, symbols):
-        '''set symbols '''
-
-        self.symbols=symbols
