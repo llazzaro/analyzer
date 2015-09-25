@@ -14,45 +14,31 @@ class TickSubscriber(object):
 
     def __init__(self, name):
         ''' constructor '''
-        self.__id = self.__generateId()
-        self.__name = name
+        self.id = self.__generateId()
+        self.name = name
         self.__threadLock = threading.Lock()
 
     def __generateId(self):
-        ''' generate id '''
         return uuid.uuid4()
 
-    def __getId(self):
-        ''' get id '''
-        return self.__id
-
-    def __getName(self):
-        ''' get name '''
-        return self.__name
-
     def pre_consume(self, ticks):
-        ''' override function '''
-        pass
+        raise NotImplementedError('Abtract class method called')
 
     @abc.abstractmethod
     def tick_update(self, ticks):
         ''' consume ticks '''
         return
 
-    def order_executed(self, orderDict):
+    def order_executed(self, order_dict):
         ''' call back for executed order with order id, should be overridden '''
         return
 
     def complete(self):
-        ''' complete operation '''
-        pass
+        raise NotImplementedError('Abtract class method called')
 
     @abc.abstractmethod
-    def sub_rules(self):
+    def subscriber_rules(self):
         ''' call back from framework
             return (symbolRe, rules)
         '''
         return
-
-    subId = property(__getId)
-    name = property(__getName)

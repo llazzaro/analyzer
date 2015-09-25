@@ -16,37 +16,37 @@ LOG=logging.getLogger()
 
 
 class TickFeeder(object):
-    ''' constructor
+    '''
         no tick operation should take more that 2 second
         threadMaxFails indicates how many times thread for a subscriber can timeout,
         if it exceeds, them unregister that subscriber
     '''
-    def __init__(self, intervalTimeout=2, start=0, end=None, trade_type=None):
-        self.__subs={}  # securityIds: sub
-        self.__symbols=[]
-        self.__indexSymbol=None
-        self.__dam=None
-        self.__intervalTimeout=intervalTimeout
+    def __init__(self, interval_timeout=2, start=0, end=None, trade_type=None, symbols=None, dam=None):
+        self.subs={}  # securityIds: sub
+        self.symbols=symbols
+        self.inde_symbol=None
+        self.dam=dam
+        self.interval_timeout=interval_timeout
         self.start=start
         self.end=end
-        self.tradingCenter=None
+        self.trading_center=None
         self.saver=None
-        self.__updatedTick=None
-        self.timeTicksDict={}
-        self.iTimePositionDict={}
+        self.updated_tick=None
+        self.time_ticks_dict={}
+        self.i_time_position_dict={}
         self.trade_type=trade_type
 
-    def getUpdatedTick(self):
+    def get_updated_tick(self):
         ''' return timeTickTuple with status changes '''
         timeTicksTuple=self.__updatedTick
 
         return timeTicksTuple
 
-    def clearUpdateTick(self):
+    def clear_update_tick(self):
         ''' clear current ticks '''
-        self.__updatedTick=None
+        self.updated_tick=None
 
-    def _getSymbolTicksDict(self, symbols):
+    def _get_symbol_ticks_dict(self, symbols):
         ''' get ticks from one dam'''
         ticks=[]
         if TICK == self.trade_type:
@@ -59,7 +59,7 @@ class TickFeeder(object):
 
         return ticks
 
-    def __loadTicks(self):
+    def __load_ticks(self):
         ''' generate timeTicksDict based on source DAM'''
         LOG.info('Start loading ticks, it may take a while......')
 
@@ -73,17 +73,17 @@ class TickFeeder(object):
         except BaseException as excp:
             LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.__symbols, excp, traceback.format_exc(8)))
 
-    def __loadIndex(self):
+    def __load_index(self):
         ''' generate timeTicksDict based on source DAM'''
         LOG.debug('Start loading index ticks, it may take a while......')
         try:
-            return self._getSymbolTicksDict([self.__indexSymbol])
+            return self._getSymbolTicksDict([self.index_symbol])
 
         except KeyboardInterrupt as ki:
-            LOG.warn("Interrupted by user  when loading ticks for %s" % self.__indexSymbol)
+            LOG.warn("Interrupted by user  when loading ticks for %s" % self.index_symbol)
             raise ki
         except BaseException as excp:
-            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.__indexSymbol, excp, traceback.format_exc(8)))
+            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.index_symbol, excp, traceback.format_exc(8)))
 
         return {}
 
@@ -96,16 +96,16 @@ class TickFeeder(object):
             self._freshTradingCenter(self.timeTicksDict[timeStamp])
 
             self._freshUpdatedTick(timeStamp, self.timeTicksDict[timeStamp])
-            #self._updateHistory(timeStamp, self.timeTicksDict[timeStamp], self.indexTicksDict.get(timeStamp))
+            # self._updateHistory(timeStamp, self.timeTicksDict[timeStamp], self.indexTicksDict.get(timeStamp))
 
             while self.__updatedTick:
                 time.sleep(0)
 
-    def _freshUpdatedTick(self, timeStamp, symbolTicksDict):
+    def _fresh_updated_tick(self, timeStamp, symbolTicksDict):
         ''' update self.__updatedTick '''
         self.__updatedTick=(timeStamp, symbolTicksDict)
 
-    def _freshTradingCenter(self, symbolTicksDict):
+    def _fresh_trading_center(self, symbolTicksDict):
         ''' feed trading center ticks '''
         self.tradingCenter.consumeTicks(symbolTicksDict)
 
@@ -120,30 +120,22 @@ class TickFeeder(object):
 
             timeITicksDict=self.__loadIndex()
             if timeITicksDict:
-                for time, symbolDict in timeITicksDict.iteritems():
+                for c_time, symbolDict in timeITicksDict.iteritems():
                     for symbol in symbolDict.keys():
-                        self.saver.write(time, STATE_SAVER_INDEX_PRICE, symbolDict[symbol].close)
+                        self.saver.write(c_time, STATE_SAVER_INDEX_PRICE, symbolDict[symbol].close)
                         self.iTimePositionDict[time]=symbolDict[symbol].close
                         break  # should only have one benchmark
 
         except Exception as ex:
             LOG.warn("Unknown error when recording index info:" + str(ex))
 
-    def setSymbols(self, symbols):
+    def set_index_symbol(self, index_symbol):
         ''' set symbols '''
-        self.__symbols=symbols
+        self.index_symbol=index_symbol
 
-    def setIndexSymbol(self, indexSymbol):
-        ''' set symbols '''
-        self.__indexSymbol=indexSymbol
-
-    def setDam(self, dam):
-        ''' set source dam '''
-        self.__dam=dam
-
-    def pubTicks(self, ticks, sub):
+    def pub_ticks(self, ticks, sub):
         ''' publish ticks to sub '''
-        thread=Thread(target=sub.preConsume, args=(ticks,))
+        thread=Thread(target=sub.pre_consume, args=(ticks,))
         thread.setDaemon(False)
         thread.start()
         return thread

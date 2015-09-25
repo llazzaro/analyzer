@@ -149,13 +149,12 @@ class TestRunner(object):
 
         # wire things together
         self._setupStrategy()
-        self.__tickFeeder.tradingCenter = self.__tradingCenter
-        self.__tradingEngine.tickProxy = self.__tickFeeder
-        self.__tradingEngine.orderProxy = self.__tradingCenter
-        self.__tradingCenter.accountManager = self.__accountManager
-        self.__tradingEngine.saver = self.__saver
+        self.__tickFeeder.tradingCenter = self.trading_center
+        self.trading_engine.tickProxy = self.__tickFeeder
+        self.trading_engine.orderProxy = self.trading_center
+        self.trading_center.accountManager = self.__accountManager
+        self.trading_engine.saver = self.__saver
         self.__tickFeeder.saver = self.__saver
-        self.__accountManager.saver = self.__saver
 
     def _setupTradingCenter(self):
         self.__tradingCenter.start = 0
@@ -164,10 +163,7 @@ class TestRunner(object):
     def _setupTickFeeder(self):
         ''' setup tickFeeder'''
         self.__tickFeeder.indexHelper = self.__indexHelper
-        self.__tickFeeder.setSymbols(self.__symbols)
-        self.__tickFeeder.setDam(self._createDam(""))  # no need to set symbol because it's batch operation
-
-        iSymbol = self.__config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_INDEX)
+        iSymbol = self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_INDEX)
         self.__tickFeeder.setIndexSymbol(iSymbol)
 
     def _createDam(self, symbol):
