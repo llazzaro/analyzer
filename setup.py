@@ -4,9 +4,8 @@ Created on July 1, 2011
 @author: ppa
 '''
 from setuptools import setup
-from setupCommand import TestCommand, CleanCommand
 
-version = '0.0.5'
+version = '0.0.6'
 
 setup(name='analyzer',
       version=version,
@@ -48,4 +47,4 @@ setup(name='analyzer',
           'matplotlib',
           'coveralls'
       ],
-      cmdclass={'test': TestCommand, 'clean': CleanCommand})
+      test_suite='tests')
