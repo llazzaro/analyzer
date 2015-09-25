@@ -14,7 +14,6 @@ from analyzer.lib.errors import Errors, UfException
 
 
 class StrategyFactory(object):
-    ''' Strategy factory '''
     STRATEGY_DICT = {'period': PeriodStrategy,
                      'sma': SMAStrategy,
                      'smaPortfolio': SMAPortfolioStrategy,
@@ -22,14 +21,14 @@ class StrategyFactory(object):
                      'zscoreMomentumPortfolio': ZscoreMomentumPortfolioStrategy}
 
     @staticmethod
-    def createStrategy(name, configDict):
+    def create_strategy(name, symbols, config):
         ''' create a metric '''
         if name not in StrategyFactory.STRATEGY_DICT:
             raise UfException(Errors.INVALID_STRATEGY_NAME,
                               "Strategy name is invalid %s" % name)
-        return StrategyFactory.STRATEGY_DICT[name](configDict)
+        return StrategyFactory.STRATEGY_DICT[name](config, symbols)
 
     @staticmethod
-    def getAvailableTypes():
+    def available_strategies():
         ''' return all available types '''
         return StrategyFactory.STRATEGY_DICT.keys()

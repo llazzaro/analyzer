@@ -6,23 +6,24 @@ from analyzer.backtest.constant import (
     CONF_ULTRAFINANCE_SECTION,
     CONF_STRATEGY_NAME
 )
-from analyzer.backtest.tickSubscriber.strategies.strategyFactory import StrategyFactory
+from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
 from analyzer.backtest.trading_engine import TradingEngine
 
 
-class testTradingEngine(unittest.TestCase):
+class TestTradingEngine(unittest.TestCase):
     def setUp(self):
         self.config = PyConfig()
         self.config.setSource("test_config.ini")
-        self.strategy = StrategyFactory.createStrategy(self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
-                                                  self.config.getSection(CONF_ULTRAFINANCE_SECTION))
         self.symbols = ['GOOG']
-        self.strategy.setSymbols(self.symbols)
+        self.strategy = StrategyFactory.create_strategy(
+                self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.symbols,
+                self.config.getSection(CONF_ULTRAFINANCE_SECTION))
 
-        self.strategy2 = StrategyFactory.createStrategy(self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
-                                                  self.config.getSection(CONF_ULTRAFINANCE_SECTION))
-        self.symbols = ['GOOG']
-        self.strategy2.setSymbols(self.symbols)
+        self.strategy2 = StrategyFactory.create_strategy(
+                self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.symbols,
+                self.config.getSection(CONF_ULTRAFINANCE_SECTION))
 
     def tearDown(self):
         pass

@@ -28,7 +28,7 @@ class BaseStrategy(TickSubscriber):
         self.history=None
         self.account_manager=None
 
-    def sub_rules(self):
+    def subscriber_rules(self):
         ''' override function '''
         return (self.symbols, [EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED])
 

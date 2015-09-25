@@ -10,7 +10,7 @@ import logging
 import logging.config
 
 
-from analyzer.backtest.tickSubscriber.strategies.strategyFactory import StrategyFactory
+from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
 from analyzer.backtest.trading_center import TradingCenter
 from analyzer.backtest.tick_feeder import TickFeeder
 from analyzer.backtest.trading_engine import TradingEngine
@@ -192,15 +192,13 @@ class TestRunner(object):
 
     def _setupStrategy(self):
         ''' setup tradingEngine'''
-        strategy = StrategyFactory.createStrategy(self.__config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
-                                                  self.__config.getSection(CONF_ULTRAFINANCE_SECTION))
-        strategy.setSymbols(self.__symbols)
-        strategy.history = self.__history
-
-        # associate account
-        self.__accountId = self.__accountManager.createAccount(self.__cash)
-        strategy.accountId = self.__accountId
-        strategy.accountManager = self.__accountManager
+        strategy = StrategyFactory.createStrategy(
+                self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.config.getSection(CONF_ULTRAFINANCE_SECTION),
+                self.symbols,
+                self.history,
+                self.account,
+                self.trading_engine)
 
         # register on trading engine
         strategy.tradingEngine = self.__tradingEngine
