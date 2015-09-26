@@ -6,7 +6,7 @@ class BaseDAM(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
-        self.__symbol = None
+        self.symbol = None
 
     def read_quotes(self, start, end):
         raise NotImplementedError('Abstract method called')
