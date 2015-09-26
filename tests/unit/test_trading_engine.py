@@ -40,8 +40,8 @@ class TestTradingEngine(unittest.TestCase):
         trading_engine.register(self.strategy)
 
         # lets check that the trading engine was setup correctly
-        for key in trading_engine.subs.keys():
-            event = trading_engine.subs[key]
+        for key in trading_engine.subscribers.keys():
+            event = trading_engine.subscribers[key]
             for strategy in event.keys():
                 self.assertEquals(self.strategy, strategy)
                 self.assertEquals(self.symbols, event[strategy]['symbols'])
@@ -51,20 +51,19 @@ class TestTradingEngine(unittest.TestCase):
         trading_engine = TradingEngine()
         trading_engine.register(self.strategy)
 
-        self.assertEquals(len(trading_engine.subs.keys()), 2)
+        self.assertEquals(len(trading_engine.subscribers.keys()), 2)
         trading_engine.unregister(self.strategy)
         # since this was the only strategy check if events is empty
-        self.assertEquals(len(trading_engine.subs.keys()), 0)
+        self.assertEquals(len(trading_engine.subscribers.keys()), 0)
         trading_engine.register(self.strategy)
         trading_engine.register(self.strategy2)
-        self.assertEquals(len(trading_engine.subs.keys()), 2)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subs.values())[0]), 2)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subs.values())[1]), 2)
+        self.assertEquals(len(trading_engine.subscribers.keys()), 2)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[0]), 2)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[1]), 2)
         trading_engine.unregister(self.strategy)
-        self.assertEquals(len(trading_engine.subs.keys()), 2)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subs.values())[0]), 1)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subs.values())[1]), 1)
-
+        self.assertEquals(len(trading_engine.subscribers.keys()), 2)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[0]), 1)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[1]), 1)
 
     def test_consume_ticks(self):
         pass

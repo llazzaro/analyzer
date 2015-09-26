@@ -19,11 +19,11 @@ LOG=logging.getLogger()
 class TradingEngine(object):
     '''
         no tick operation should take more that 0.5 second
-        threadMaxFails indicates how many times thread for a subscriber can timeout,
-        if it exceeds, them unregister that subscriber
+        threadMaxFails indicates how many times thread for a subscriberscriber can timeout,
+        if it exceeds, them unregister that subscriberscriber
     '''
     def __init__(self, threadTimeout=2, threadMaxFail=10):
-        self.subs=defaultdict(dict)  # {'event': {sub: {symbols: sub} }
+        self.subscribers=defaultdict(dict)  # {'event': {subscriber: {symbols: subscriber} }
         self.tickProxy=None
         self.orderProxy=None
         self.saver=None
@@ -36,9 +36,9 @@ class TradingEngine(object):
         ''' set stop flag '''
         self._stop=True
 
-    def validateSub(self, sub):
-        ''' validate subscriber '''
-        symbols, rules=sub.subRules()
+    def validate(self, subscriber):
+        ''' validate subscriberscriber '''
+        symbols, rules = subscriber.subscriber_rules()
 
         '''
         if not symbols:
@@ -46,30 +46,31 @@ class TradingEngine(object):
                                "can't find any symbol with re %s in source %s" % (symbolRe, self._source.keys()))
         '''
         # TODO: validate rules
-        return symbols, rules, sub
+        return symbols, rules, subscriber
 
-    def register(self, sub):
-        ''' register a subscriber
+    def register(self, subscriber):
+        ''' register a subscriberscriber
             rule is not used for now
         '''
-        symbols, events, sub=self.validateSub(sub)
+        symbols, events, subscriber=self.validate(subscriber)
 
         for event in events:
-            self.subs[event][sub]={'symbols': symbols, 'fail': 0}
+            self.subscribers[event][subscriber]={'symbols': symbols, 'fail': 0}
             LOG.debug('register %s with id %s to event %s, symbols %s'
-                      % (sub.name, sub.subId, event, symbols))
+                      % (subscriber.name, subscriber.id, event, symbols))
 
-    def unregister(self, sub):
-        ''' unregister'''
-        for event, subDict in self.subs.items():
-            if sub in subDict.keys():
-                del self.subs[event][sub]
+    def unregister(self, subscriber):
+        ''' unregister subscriberscrip
+        '''
+        for event, subscriberDict in self.subscribers.items():
+            if subscriber in subscriberDict.keys():
+                del self.subscribers[event][subscriber]
 
-                # remove whole subs[event] if it's empty
-                if not self.subs[event]:
-                    del self.subs[event]
+                # remove whole subscribers[event] if it's empty
+                if not self.subscribers[event]:
+                    del self.subscribers[event]
 
-                LOG.debug('unregister %s with id %s' % (sub.name, sub.subId))
+                LOG.debug('unregister %s with id %s' % (subscriber.name, subscriber.id))
 
     # TODO: in real time trading, change this function
     def runListener(self):
@@ -90,7 +91,7 @@ class TradingEngine(object):
 
                 if timeTicksTuple:
                     self._curTime=timeTicksTuple[0]
-                    self._tickUpdate(timeTicksTuple)
+                    self._tick_update(timeTicksTuple)
 
                 updatedOrderDict=self.orderProxy.getUpdatedOrder()
                 placedOrderDict=self.orderProxy.getPlacedOrder()
@@ -106,20 +107,20 @@ class TradingEngine(object):
 
     def _complete(self):
         ''' call when complete feeding ticks '''
-        for subDict in self.subs.itervalues():
-            for sub in subDict.iterkeys():
-                sub.complete()
+        for subscriberDict in self.subscribers.itervalues():
+            for subscriber in subscriberDict.iterkeys():
+                subscriber.complete()
 
-    def consumeTicks(self, ticks, sub, event):
-        ''' publish ticks to sub '''
-        thread=Thread(target=getattr(sub, event), args=(ticks,))
+    def consumeTicks(self, ticks, subscriber, event):
+        ''' publish ticks to subscriber '''
+        thread=Thread(target=getattr(subscriber, event), args=(ticks,))
         thread.setDaemon(False)
         thread.start()
         return thread
 
-    def consumeExecutedOrders(self, orderDict, sub, event):
-        ''' publish ticks to sub '''
-        thread=Thread(target=getattr(sub, event), args=(orderDict,))
+    def consumeExecutedOrders(self, orderDict, subscriber, event):
+        ''' publish ticks to subscriber '''
+        thread=Thread(target=getattr(subscriber, event), args=(orderDict,))
         thread.setDaemon(False)
         thread.start()
         return thread
@@ -138,42 +139,42 @@ class TradingEngine(object):
         order status changes
         '''
         event=EVENT_ORDER_EXECUTED
-        for sub, attrs in self.subs[EVENT_ORDER_EXECUTED].items():
-            thread=self.consumeExecutedOrders(orderDict, sub, event)
+        for subscriber, attrs in self.subscribers[EVENT_ORDER_EXECUTED].items():
+            thread=self.consumeExecutedOrders(orderDict, subscriber, event)
             thread.join(timeout=self._threadTimeout * 1000)
             if thread.isAlive():
-                LOG.error("Thread timeout for order update subId %s" % sub.subId)
+                LOG.error("Thread timeout for order update subscriberId %s" % subscriber.subscriberId)
                 attrs['fail'] += 1
 
             if attrs['fail'] > self._threadMaxFail:
-                LOG.error("For order update, subId %s fails for too many times" % sub.subId)
-                self.unregister(sub)
+                LOG.error("For order update, subscriberId %s fails for too many times" % subscriber.subscriberId)
+                self.unregister(subscriber)
 
-    def _tickUpdate(self, timeTicksTuple):
+    def _tick_update(self, timeTicksTuple):
         ''' got tick update '''
         time, symbolTicksDict=timeTicksTuple
         # TODO: remove hard coded event
         # This should not happen
         event=EVENT_TICK_UPDATE
-        if event not in self.subs:
-            LOG.warn("EVENT_TICK_UPDATE not in self.subs %s" % self.subs)
+        if event not in self.subscribers:
+            LOG.warn("EVENT_TICK_UPDATE not in self.subscribers %s" % self.subscribers)
             return
 
-        for sub, attrs in self.subs[event].items():
+        for subscriber, attrs in self.subscribers[event].items():
             ticks={}
             for symbol in attrs['symbols']:
                 if symbol in symbolTicksDict:
                     ticks[symbol]=symbolTicksDict[symbol]
 
-            thread=self.consumeTicks(ticks, sub, event)
+            thread=self.consumeTicks(ticks, subscriber, event)
             thread.join(timeout=self._threadTimeout * 1000)
             if thread.isAlive():
-                LOG.error("Thread timeout for tick update, subId %s at time %s" % (sub.subId, time))
+                LOG.error("Thread timeout for tick update, subscriberId %s at time %s" % (subscriber.subscriberId, time))
                 attrs['fail'] += 1
 
             if attrs['fail'] > self._threadMaxFail:
-                LOG.error("For tick update, subId %s fails for too many times" % sub.subId)
-                self.unregister(sub)
+                LOG.error("For tick update, subscriberId %s fails for too many times" % subscriber.subscriberId)
+                self.unregister(subscriber)
 
         if self.saver and len(symbolTicksDict) < 10:
             for symbol in symbolTicksDict:
