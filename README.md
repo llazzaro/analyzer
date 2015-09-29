@@ -14,7 +14,7 @@ Python project for real-time financial analyzing and backtesting trading strateg
 
 Architecture
 
-![Architecture](https://cloud.githubusercontent.com/assets/568181/10155470/097426ae-664c-11e5-89b3-8baaa9c94c39.png)
+![Architecture](https://cloud.githubusercontent.com/assets/568181/10155557/31a0875c-664d-11e5-9d56-91ba3ab2216d.png)
 
 Note: this project is still non working since I deleted DAM and model! there is a lot of work pending
 
