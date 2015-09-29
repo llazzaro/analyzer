@@ -55,7 +55,7 @@ class PyConfig(object):
 
         return configs
 
-    def getOption(self, section, option):
+    def get(self, section, option):
         ''' whether an option exists in the section '''
         self.__validateConfig()
 
@@ -88,6 +88,6 @@ if __name__ == '__main__':
     config.setSource('test.ini')
     config.override("testSection", "123", "456")
     config.override("testSection", "123", "567")
-    print(config.getOption('app_main', 'feeder'))
+    print(config.get('app_main', 'feeder'))
     print(config.getSection('app_main'))
-    print(config.getOption("testSection", "123"))
+    print(config.get("testSection", "123"))

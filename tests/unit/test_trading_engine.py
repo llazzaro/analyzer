@@ -16,12 +16,12 @@ class TestTradingEngine(unittest.TestCase):
         self.config.setSource("test_config.ini")
         self.symbols = ['GOOG']
         self.strategy = StrategyFactory.create_strategy(
-                self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
                 self.symbols,
                 self.config.getSection(CONF_ULTRAFINANCE_SECTION))
 
         self.strategy2 = StrategyFactory.create_strategy(
-                self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
                 self.symbols,
                 self.config.getSection(CONF_ULTRAFINANCE_SECTION))
 

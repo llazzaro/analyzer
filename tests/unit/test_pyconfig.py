@@ -24,6 +24,6 @@ class testPyConfig(unittest.TestCase):
             print("field3 is None")
 
     def testGetOption(self):
-        option = self.config.getOption("log", "file")
+        option = self.config.get("log", "file")
         print(option)
         self.assertEqual("test.log", option)

@@ -5,8 +5,6 @@ Created on Nov 6, 2011
 '''
 import json
 import logging
-from time import sleep
-from threading import Thread
 from collections import defaultdict
 
 from analyzer.backtest.constant import EVENT_TICK_UPDATE, EVENT_ORDER_EXECUTED
@@ -86,7 +84,6 @@ class TradingEngine(object):
                 timeTicksTuple=self.tickProxy.getUpdatedTick()
 
                 if not timeTicksTuple:
-                    sleep(0)
                     continue
 
                 if timeTicksTuple:
@@ -113,17 +110,11 @@ class TradingEngine(object):
 
     def consumeTicks(self, ticks, subscriber, event):
         ''' publish ticks to subscriber '''
-        thread=Thread(target=getattr(subscriber, event), args=(ticks,))
-        thread.setDaemon(False)
-        thread.start()
-        return thread
+        subscriber.event(ticks)
 
     def consumeExecutedOrders(self, orderDict, subscriber, event):
         ''' publish ticks to subscriber '''
-        thread=Thread(target=getattr(subscriber, event), args=(orderDict,))
-        thread.setDaemon(False)
-        thread.start()
-        return thread
+        subscriber.event(orderDict)
 
     def placeOrder(self, order):
         ''' called by each strategy to place order '''

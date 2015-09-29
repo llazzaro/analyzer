@@ -5,7 +5,7 @@ Created on July 1, 2011
 '''
 from setuptools import setup
 
-version = '0.0.6'
+version = '0.1.0'
 
 setup(name='analyzer',
       version=version,
@@ -17,7 +17,7 @@ setup(name='analyzer',
       ],
       keywords='python, Finance, Algorithm, Trading, Realtime, QuantLib, pydispather',
       author='Leonardo Lazzaro',
-      author_email='lazzarleonardo@gmail.com',
+      author_email='llazzaro@dc.uba.ar',
       url='https://github.com/llazzaro/analyzer',
       license='MIT',
 

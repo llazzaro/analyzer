@@ -3,19 +3,15 @@ Created on Nov 6, 2011
 
 @author: ppa
 '''
-from analyzer.lib.errors import UfException, Errors
-from threading import Thread
+import logging
+import traceback
 
-from analyzer.backtest.constant import TICK, QUOTE
 from analyzer.backtest.constant import STATE_SAVER_INDEX_PRICE
 
-import traceback
-import time
-import logging
-LOG=logging.getLogger()
+LOG=logging.getLogger(__name__)
 
 
-class TickFeeder(object):
+class Feeder(object):
     '''
         no tick operation should take more that 2 second
         threadMaxFails indicates how many times thread for a subscriber can timeout,
@@ -36,78 +32,29 @@ class TickFeeder(object):
         self.i_time_position_dict={}
         self.trade_type=trade_type
 
-    def get_updated_tick(self):
-        ''' return timeTickTuple with status changes '''
-        timeTicksTuple=self.__updatedTick
+    def date(self):
+        return self.updated_tick
 
-        return timeTicksTuple
-
-    def clear_update_tick(self):
-        ''' clear current ticks '''
+    def clear(self):
         self.updated_tick=None
 
-    def _get_symbol_ticks_dict(self, symbols):
-        ''' get ticks from one dam'''
-        ticks=[]
-        if TICK == self.trade_type:
-            ticks=self.__dam.readBatchTupleTicks(symbols, self.start, self.end)
-        elif QUOTE == self.trade_type:
-            ticks=self.__dam.readBatchTupleQuotes(symbols, self.start, self.end)
-        else:
-            raise UfException(Errors.INVALID_TYPE,
-                              'Type %s is not accepted' % self.trade_type)
-
-        return ticks
-
-    def __load_ticks(self):
-        ''' generate timeTicksDict based on source DAM'''
-        LOG.info('Start loading ticks, it may take a while......')
-
-        LOG.info('Indexing ticks for %s' % self.__symbols)
-        try:
-            self.timeTicksDict=self._getSymbolTicksDict(self.__symbols)
-
-        except KeyboardInterrupt as ki:
-            LOG.warn("Interrupted by user  when loading ticks for %s" % self.__symbols)
-            raise ki
-        except BaseException as excp:
-            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.__symbols, excp, traceback.format_exc(8)))
-
-    def __load_index(self):
-        ''' generate timeTicksDict based on source DAM'''
-        LOG.debug('Start loading index ticks, it may take a while......')
-        try:
-            return self._getSymbolTicksDict([self.index_symbol])
-
-        except KeyboardInterrupt as ki:
-            LOG.warn("Interrupted by user  when loading ticks for %s" % self.index_symbol)
-            raise ki
-        except BaseException as excp:
-            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.index_symbol, excp, traceback.format_exc(8)))
-
-        return {}
-
     def execute(self):
-        ''' execute func '''
-        self.__loadTicks()
+        self.load()
 
-        for timeStamp in sorted(self.timeTicksDict.iterkeys()):
+        for time_stamp in sorted(self.data.iterkeys()):
             # make sure trading center finish updating first
-            self._freshTradingCenter(self.timeTicksDict[timeStamp])
+            self._feed_trading_center(self.data[time_stamp])
 
-            self._freshUpdatedTick(timeStamp, self.timeTicksDict[timeStamp])
-            # self._updateHistory(timeStamp, self.timeTicksDict[timeStamp], self.indexTicksDict.get(timeStamp))
+            self._refresh_updated_tick(time_stamp, self.data[time_stamp])
+            # self._updateHistory(timeStamp, self.time_ticks_dict[timeStamp], self.indexTicksDict.get(timeStamp))
 
-            while self.__updatedTick:
-                time.sleep(0)
-
-    def _fresh_updated_tick(self, timeStamp, symbolTicksDict):
+    def _refresh_updated_tick(self, time_stamp, symbol_ticks_dict):
         ''' update self.__updatedTick '''
-        self.__updatedTick=(timeStamp, symbolTicksDict)
+        self.updated_tick=(time_stamp, symbol_ticks_dict)
 
-    def _fresh_trading_center(self, symbolTicksDict):
+    def _feed_trading_center(self, ticks):
         ''' feed trading center ticks '''
-        self.tradingCenter.consumeTicks(symbolTicksDict)
+        self.trading_center.consume_ticks(ticks)
 
     def complete(self):
         '''
@@ -118,24 +65,94 @@ class TickFeeder(object):
             if not self.saver:
                 return
 
-            timeITicksDict=self.__loadIndex()
-            if timeITicksDict:
-                for c_time, symbolDict in timeITicksDict.iteritems():
-                    for symbol in symbolDict.keys():
-                        self.saver.write(c_time, STATE_SAVER_INDEX_PRICE, symbolDict[symbol].close)
-                        self.iTimePositionDict[time]=symbolDict[symbol].close
+            time_ticks_dict=self._load_index()
+            if time_ticks_dict:
+                for c_time, symbol_dict in time_ticks_dict.iteritems():
+                    for symbol in symbol_dict.keys():
+                        self.saver.write(c_time, STATE_SAVER_INDEX_PRICE, symbol_dict[symbol].close)
+#                        self.iTimePositionDict[time]=symbol_dict[symbol].close
                         break  # should only have one benchmark
 
         except Exception as ex:
             LOG.warn("Unknown error when recording index info:" + str(ex))
 
     def set_index_symbol(self, index_symbol):
-        ''' set symbols '''
         self.index_symbol=index_symbol
 
-    def pub_ticks(self, ticks, sub):
-        ''' publish ticks to sub '''
-        thread=Thread(target=sub.pre_consume, args=(ticks,))
-        thread.setDaemon(False)
-        thread.start()
-        return thread
+    def validate(self, subscriber):
+        symbols = []
+        return symbols
+
+    def register(self):
+        pass
+
+
+class TickFeeder(Feeder):
+
+    def _get_symbol_data(self, symbols):
+        ticks=self.dam.read_ticks(symbols, self.start, self.end)
+        return ticks
+
+    def load(self):
+        ''' generate time_ticks_dict based on source DAM'''
+        LOG.info('Start loading ticks, it may take a while......')
+
+        LOG.info('Indexing ticks for %s' % self.symbols)
+        try:
+            return self._get_symbol_data(self.symbols)
+
+        except KeyboardInterrupt as ki:
+            LOG.warn("Interrupted by user  when loading ticks for %s" % self.symbols)
+            raise ki
+        except BaseException as excp:
+            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.symbols, excp, traceback.format_exc(8)))
+
+    def _load_index(self):
+        ''' generate time_ticks_dict based on source DAM'''
+        LOG.debug('Start loading index ticks, it may take a while......')
+        try:
+            return self._get_symbol_data([self.index_symbol])
+
+        except KeyboardInterrupt as ki:
+            LOG.warn("Interrupted by user  when loading ticks for %s" % self.index_symbol)
+            raise ki
+        except BaseException as excp:
+            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.index_symbol, excp, traceback.format_exc(8)))
+
+        return {}
+
+
+class QuoteFeeder(Feeder):
+
+    def _get_symbol_data(self, symbols):
+        ''' get quotes from one dam'''
+        quotes=[]
+        quotes=self.dam.read_quotes(symbols, self.start, self.end)
+        return quotes
+
+    def load(self):
+        LOG.info('Start loading quotes, it may take a while......')
+
+        LOG.info('Indexing quotes for %s' % self.symbols)
+        try:
+            return self._get_symbol_data(self.symbols)
+
+        except KeyboardInterrupt as ki:
+            LOG.warn("Interrupted by user  when loading quotes for %s" % self.symbols)
+            raise ki
+        except BaseException as excp:
+            LOG.warn("Unknown exception when loading quotes for %s: except %s, traceback %s" % (self.symbols, excp, traceback.format_exc(8)))
+
+    def _load_index(self):
+        ''' generate time_ticks_dict based on source DAM'''
+        LOG.debug('Start loading index ticks, it may take a while......')
+        try:
+            return self._get_symbol_data([self.index_symbol])
+
+        except KeyboardInterrupt as ki:
+            LOG.warn("Interrupted by user  when loading ticks for {0}".format(self.index_symbol))
+            raise ki
+        except BaseException as excp:
+            LOG.warn("Unknown exception when loading ticks for {0}: except {1}, traceback {2}".format(self.index_symbol, excp, traceback.format_exc(8)))
+
+        return {}

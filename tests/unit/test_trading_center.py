@@ -4,7 +4,6 @@ Created on Dec 18, 2011
 @author: ppa
 '''
 import unittest
-from datetime import datetime
 
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import Session
@@ -48,22 +47,6 @@ class testTradingCenter(unittest.TestCase):
         self.trans.rollback()
         self.session.close()
 
-    def testGetCopyAccounts(self):
-        tc=TradingCenter(self.session)
-        tc.createAccountWithMetrix(100000, 0)
-        tc.createAccountWithMetrix(200000, 0)
-
-        accounts=tc.getCopyAccounts('.*')
-        print([str(account) for account in accounts])
-        self.assertEquals(2, len(accounts))
-
-    def testGetCopyAccount(self):
-        tc=TradingCenter(self.session)
-        accountId1=tc.createAccountWithMetrix(100000, 0)
-
-        account=tc.getCopyAccount(accountId1)
-        self.assertEquals(100000, account.cash)
-
     def test_open_orders_by_order_id(self):
         stock=Stock(symbol='symbol', description='a stock', ISIN='US123456789', exchange=self.exchange)
         order1=BuyOrder(account=self.account, security=stock, price=13.2, share=10)
@@ -92,6 +75,7 @@ class testTradingCenter(unittest.TestCase):
         orders=tc.open_orders_by_symbol('symbol')
         self.assertEquals([order1, order2], list(orders))
 
+    @unittest.skip('pystock not yet ready')
     def testCancelOrder(self):
 
         stock=Stock(symbol='symbol', description='a stock', ISIN='US123456789', exchange=self.exchange)
@@ -113,6 +97,7 @@ class testTradingCenter(unittest.TestCase):
         self.assertEquals({}, tc.open_orders())
         self.assertEquals([order1, order2], tc.closed_orders)
 
+    @unittest.skip('pystock not yet ready')
     def testCancelAllOpenOrders(self):
         security=Stock(symbol='symbol', description='a stock', ISIN='US123456789', exchange=self.exchange)
         order1=BuyOrder(account=self.account, security=security, price=13.2, share=10)
