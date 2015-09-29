@@ -12,7 +12,9 @@ Donate bitcoins to this project.
 
 Python project for real-time financial analyzing and backtesting trading strategies
 
-important: this project is a fork of the original https://github.com/panpanpandas/ultrafinance
+Architecture
+
+![Architecture](https://cloud.githubusercontent.com/assets/568181/10155470/097426ae-664c-11e5-89b3-8baaa9c94c39.png)
 
 Note: this project is still non working since I deleted DAM and model! there is a lot of work pending
 
@@ -25,3 +27,5 @@ So Please also check this projects:
  * Data Access https://github.com/llazzaro/analyzerdam 
  * Model https://github.com/llazzaro/pystock
  * Strategies https://github.com/llazzaro/analyzerstrategies
+
+important: this project is a fork of the original https://github.com/panpanpandas/ultrafinance
