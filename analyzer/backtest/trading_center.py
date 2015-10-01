@@ -89,4 +89,12 @@ class TradingCenter(object):
 
     @property
     def open_orders(self):
-        return self.session.query(Order).all()
+        return filter(lambda order: order.current_stage.is_open, self.session.query(Order).all())
+
+    @property
+    def filled_orders(self):
+        return filter(lambda order: order.current_stage.is_filled, self.session.query(Order).all())
+
+    @property
+    def cancel_orders(self):
+        return filter(lambda order: order.current_stage.is_cancel, self.session.query(Order).all())
