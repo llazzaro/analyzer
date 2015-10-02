@@ -15,7 +15,6 @@ from analyzer.backtest.tick_subscriber.strategies.strategy_factory import Strate
 from analyzer.backtest.trading_center import TradingCenter
 from analyzer.backtest.tick_feeder import TickFeeder
 from analyzer.backtest.trading_engine import TradingEngine
-from analyzer.backtest.account_manager import AccountManager
 from analyzer.ufConfig.pyConfig import PyConfig
 from analyzerdam.DAMFactory import DAMFactory
 from analyzer.backtest.stateSaver.stateSaverFactory import StateSaverFactory
@@ -54,17 +53,11 @@ class BackTester(object):
         self.account = account
         self.__mCalculator = MetricManager()
         self.__symbolLists = symbolLists
-        self.__accounts = []
         self.start_tick_date = startTickDate
         self.__startTradeDate = startTradeDate
         self.end_trade_date = endTradeDate
         self.__firstSaver = None
 
-    @property
-    def trade_type(self):
-        return self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_TRADE_TYPE)
-
-    def setup(self):
         ''' setup '''
         self.config.override(CONF_ULTRAFINANCE_SECTION, CONF_INIT_CASH, self.account.cash)
         self.config.override(CONF_ULTRAFINANCE_SECTION, CONF_START_TRADE_DATE, self.__startTradeDate)
@@ -73,6 +66,10 @@ class BackTester(object):
         LOG.debug(self.__symbolLists)
         if not self.__symbolLists:
             self._loadSymbols()
+
+    @property
+    def trade_type(self):
+        return self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_TRADE_TYPE)
 
     def _setupLog(self):
         ''' setup logging '''
@@ -94,7 +91,7 @@ class BackTester(object):
 
     def _loadSymbols(self):
         ''' find symbols'''
-        symbolFile = self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_SYMBOL_FILE)
+        symbolFile = self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_SYMBOL_FILE)
         assert symbolFile is not None, "%s is required in config file" % CONF_SYMBOL_FILE
 
         LOG.info("loading symbols from %s" % os.path.join(self.config.getDir(), symbolFile))
@@ -134,7 +131,6 @@ class TestRunner(object):
     def __init__(self, config, session, metric_manager, symbols, startTickDate, endTradeDate, account, trade_type):
         self.config = config
         self.trade_type = trade_type
-        self.__accountManager = AccountManager()
         self.account = account
         self.start_tick_date = startTickDate
         self.end_trade_date = endTradeDate
@@ -163,7 +159,6 @@ class TestRunner(object):
         self.__tickFeeder.tradingCenter = self.trading_center
         self.trading_engine.tickProxy = self.__tickFeeder
         self.trading_engine.orderProxy = self.trading_center
-        self.trading_center.accountManager = self.__accountManager
         self.trading_engine.saver = self.__saver
         self.__tickFeeder.saver = self.__saver
 
@@ -173,7 +168,7 @@ class TestRunner(object):
 
     def _setup_tick_feeder(self):
         self.__tickFeeder.indexHelper = self.__indexHelper
-        iSymbol = self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_INDEX)
+        iSymbol = self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_INDEX)
         self.__tickFeeder.setIndexSymbol(iSymbol)
 
     def _create_dam(self, symbol):
@@ -186,22 +181,22 @@ class TestRunner(object):
 
     def _setup_saver(self):
         ''' setup Saver '''
-        saverName = self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_SAVER)
-        outputDbPrefix = self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_OUTPUT_DB_PREFIX)
+        saverName = self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_SAVER)
+        outputDbPrefix = self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_OUTPUT_DB_PREFIX)
         if saverName:
             self.__saver = StateSaverFactory.createStateSaver(
                     saverName,
                     {
                         'db': outputDbPrefix + getBackTestResultDbName(
                             self.symbols,
-                            self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                            self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
                             self.start_tick_date,
                             self.end_trade_date)})
 
     def _setup_strategy(self):
         ''' setup tradingEngine'''
         strategy = StrategyFactory.createStrategy(
-                self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
                 self.config.getSection(CONF_ULTRAFINANCE_SECTION),
                 self.symbols,
                 self.history,
@@ -223,15 +218,14 @@ class TestRunner(object):
         self.__tickFeeder.execute()
         self.__tickFeeder.complete()
 
-        timePositions = self.__accountManager.getAccountPostions(self.account)
-        startTradeDate = self.config.getOption(CONF_ULTRAFINANCE_SECTION, CONF_START_TRADE_DATE)
+        timePositions = self.account.positions
+        startTradeDate = self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_START_TRADE_DATE)
         if startTradeDate:
             startTradeDate = int(startTradeDate)
             timePositions = [tp for tp in timePositions if tp[0] >= startTradeDate]
 
         # get and save metrics
         result = self.__metric_manager.calculate(self.symbols, timePositions, self.__tickFeeder.iTimePositionDict)
-        account = self.__accountManager.getAccount(self.account)
         self.__saver.writeMetrics(result[BasicMetric.START_TIME],
                                   result[BasicMetric.END_TIME],
                                   result[BasicMetric.MIN_TIME_VALUE][1],
@@ -239,8 +233,8 @@ class TestRunner(object):
                                   result[BasicMetric.SRATIO],
                                   result[BasicMetric.MAX_DRAW_DOWN][1],
                                   result[BasicMetric.R_SQUARED],
-                                  account.getTotalValue(),
-                                  account.holdings)
+                                  self.account.total,
+                                  self.account.holdings)
 
         # write to saver
         LOG.debug("Writing state to saver")
@@ -251,11 +245,9 @@ class TestRunner(object):
 
     def _printResult(self):
         ''' print result'''
-        account = self.__accountManager.getAccount(self.account)
-        self.__accounts.append(account)
-        LOG.info("account %s" % account)
-        LOG.debug([str(order) for order in account.orderHistory])
-        LOG.debug("account position %s" % self.__accountManager.getAccountPostions(self.account))
+        LOG.info("account %s" % self.account)
+        LOG.debug([str(order) for order in self.account.orders])
+        LOG.debug("account position %s" % self.account.positions)
 
     def runTest(self):
         ''' run one test '''
