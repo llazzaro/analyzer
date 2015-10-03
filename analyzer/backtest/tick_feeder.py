@@ -32,16 +32,13 @@ class Feeder(object):
         self.i_time_position_dict={}
         self.trade_type=trade_type
 
-    def date(self):
-        return self.updated_tick
-
     def clear(self):
         self.updated_tick=None
 
     def execute(self):
-        self.load()
+        self.data = self.load()
 
-        for time_stamp in sorted(self.data.iterkeys()):
+        for time_stamp in sorted(self.data):
             # make sure trading center finish updating first
             self._feed_trading_center(self.data[time_stamp])
 
@@ -75,9 +72,6 @@ class Feeder(object):
 
         except Exception as ex:
             LOG.warn("Unknown error when recording index info:" + str(ex))
-
-    def set_index_symbol(self, index_symbol):
-        self.index_symbol=index_symbol
 
     def validate(self, subscriber):
         symbols = []

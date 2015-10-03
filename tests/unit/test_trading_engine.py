@@ -3,7 +3,7 @@ import unittest
 from analyzer.ufConfig.pyConfig import PyConfig
 
 from analyzer.backtest.constant import (
-    CONF_ULTRAFINANCE_SECTION,
+    CONF_ANALYZER_SECTION,
     CONF_STRATEGY_NAME
 )
 from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
@@ -16,14 +16,14 @@ class TestTradingEngine(unittest.TestCase):
         self.config.setSource("test_config.ini")
         self.symbols = ['GOOG']
         self.strategy = StrategyFactory.create_strategy(
-                self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
                 self.symbols,
-                self.config.getSection(CONF_ULTRAFINANCE_SECTION))
+                self.config)
 
         self.strategy2 = StrategyFactory.create_strategy(
-                self.config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                self.config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
                 self.symbols,
-                self.config.getSection(CONF_ULTRAFINANCE_SECTION))
+                self.config.getSection(CONF_ANALYZER_SECTION))
 
     def tearDown(self):
         pass

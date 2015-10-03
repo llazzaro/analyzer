@@ -81,14 +81,14 @@ class TradingEngine(object):
                 break
 
             else:
-                timeTicksTuple=self.tickProxy.getUpdatedTick()
+                time_ticks_tuple=self.tickProxy.updated_tick
 
-                if not timeTicksTuple:
+                if not time_ticks_tuple:
                     continue
 
-                if timeTicksTuple:
-                    self._curTime=timeTicksTuple[0]
-                    self._tick_update(timeTicksTuple)
+                if time_ticks_tuple:
+                    self._curTime=time_ticks_tuple[0]
+                    self._tick_update(time_ticks_tuple)
 
                 updatedOrderDict=self.orderProxy.getUpdatedOrder()
                 placedOrderDict=self.orderProxy.getPlacedOrder()
@@ -141,9 +141,9 @@ class TradingEngine(object):
                 LOG.error("For order update, subscriberId %s fails for too many times" % subscriber.subscriberId)
                 self.unregister(subscriber)
 
-    def _tick_update(self, timeTicksTuple):
+    def _tick_update(self, time_ticks_tuple):
         ''' got tick update '''
-        time, symbolTicksDict=timeTicksTuple
+        time, symbolTicksDict=time_ticks_tuple
         # TODO: remove hard coded event
         # This should not happen
         event=EVENT_TICK_UPDATE
