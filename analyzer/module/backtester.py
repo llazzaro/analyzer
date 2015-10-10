@@ -13,12 +13,7 @@ from threading import Thread
 from pyStock.models import Account
 
 from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
-from analyzer.backtest.trading_center import TradingCenter
-from analyzer.backtest.tick_feeder import TickFeeder
-from analyzer.backtest.trading_engine import TradingEngine
 from analyzer.ufConfig.pyConfig import PyConfig
-from analyzerdam.DAMFactory import DAMFactory
-from analyzer.backtest.stateSaver.stateSaverFactory import StateSaverFactory
 from analyzer.backtest.metric import MetricManager
 from analyzer.backtest.index_helper import IndexHelper
 from analyzer.backtest.history import History
@@ -32,8 +27,6 @@ from analyzer.backtest.constant import (
     CONF_SYMBOL_FILE,
     CONF_INDEX,
     CONF_INPUT_DAM,
-    CONF_SAVER,
-    CONF_OUTPUT_DB_PREFIX,
     CONF_STRATEGY_NAME
 )
 # from analyzer.backtest.metric import BasicMetric
@@ -47,16 +40,16 @@ LOG = logging.getLogger()
 class BackTester(object):
     ''' back testing '''
 
-    def __init__(self, config_file, session, account, startTickDate=0, startTradeDate=0, endTradeDate=None, securities=None):
+    def __init__(self, config_file, pubsub, session, account, start_tick_date=0, startTradeDate=0, endTradeDate=None, securities=None):
         LOG.debug("Loading config from %s" % config_file)
-        self.config = PyConfig()
+        self.pubsub = pubsub
+        self.pubsub = pubsub
         self.session = session
-        self.config.setSource(config_file)
 
         self.account = account
         self.__mCalculator = MetricManager()
         self.securities = []
-        self.start_tick_date = startTickDate
+        self.start_tick_date = start_tick_date
         self.__startTradeDate = startTradeDate
         self.end_trade_date = endTradeDate
         self.__firstSaver = None
@@ -84,6 +77,7 @@ class BackTester(object):
         LOG.debug("Running backtest for %s" % security)
         runner = TestRunner(
                 self.config,
+                self.pubsub,
                 self.session,
                 self.__mCalculator,
                 [security],
@@ -110,7 +104,7 @@ class BackTester(object):
 
         assert self.securities, "None symbol provided"
 
-    def runTests(self):
+    def run_tests(self):
         ''' run tests '''
         for security in self.securities:
             try:
@@ -133,21 +127,12 @@ class BackTester(object):
 
 class TestRunner(object):
     ''' back testing '''
-    def __init__(self, config, session, metric_manager, securities, startTickDate, endTradeDate, account, trade_type):
+    def __init__(self, config, pubsub, session, metric_manager, securities, start_tick_date, endTradeDate, account, trade_type):
         self.config = config
         self.trade_type = trade_type
         self.account = account
-        self.start_tick_date = startTickDate
+        self.start_tick_date = start_tick_date
         self.end_trade_date = endTradeDate
-        self.tick_feeder = TickFeeder(
-            start=startTickDate,
-            end=endTradeDate,
-            trade_type=trade_type,
-            securities=securities,
-            dam=self._create_dam(""),  # no need to set symbol because it's batch operation
-        )
-        self.trading_center = TradingCenter(session)
-        self.trading_engine = TradingEngine()
         self.index_helper = IndexHelper()
         self.history = History()
         self.securities = securities
@@ -171,28 +156,6 @@ class TestRunner(object):
         i_symbol = self.config.get(CONF_ANALYZER_SECTION, CONF_INDEX)
         self.tick_feeder.index_symbol = i_symbol
 
-    def _create_dam(self, symbol):
-        dam_name = self.config.get(CONF_ANALYZER_SECTION, CONF_INPUT_DAM)
-        input_db = self.config.get(CONF_ANALYZER_SECTION, CONF_INPUT_DB)
-        dam = DAMFactory.createDAM(dam_name, {'db': input_db})
-        dam.symbol = symbol
-
-        return dam
-
-    def _setup_saver(self):
-        ''' setup Saver '''
-        saverName = self.config.get(CONF_ANALYZER_SECTION, CONF_SAVER)
-        outputDbPrefix = self.config.get(CONF_ANALYZER_SECTION, CONF_OUTPUT_DB_PREFIX)
-        if saverName:
-            self.__saver = StateSaverFactory.createStateSaver(
-                    saverName,
-                    {
-                        'db': outputDbPrefix + getBackTestResultDbName(
-                            self.securities,
-                            self.config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
-                            self.start_tick_date,
-                            self.end_trade_date)})
-
     def _setup_strategy(self):
         ''' setup tradingEngine'''
         strategy = StrategyFactory.create_strategy(
@@ -213,9 +176,6 @@ class TestRunner(object):
 
         # start tickFeeder
         # share a queue and this should be another thread
-        self.tick_feeder.execute()
-        self.tick_feeder.complete()
-
         timePositions = self.account.positions
         startTradeDate = self.config.get(CONF_ANALYZER_SECTION, CONF_START_TRADE_DATE)
         if startTradeDate:
@@ -234,10 +194,6 @@ class TestRunner(object):
         #                          self.account.total,
         #                          self.account.holdings)
 
-        # write to saver
-        # LOG.debug("Writing state to saver")
-        # self.__saver.commit()
-
         self.trading_engine.stop()
         thread.join(timeout=240)
 
@@ -254,9 +210,9 @@ class TestRunner(object):
 
 
 # ###########Util function################################
-def getBackTestResultDbName(securities, strategyName, startTickDate, endTradeDate):
+def getBackTestResultDbName(securities, strategyName, start_tick_date, endTradeDate):
     ''' get table name for back test result'''
-    return "%s__%s__%s__%s" % ('_'.join(securities) if len(securities) <= 1 else len(securities), strategyName, startTickDate, endTradeDate if endTradeDate else "Now")
+    return "%s__%s__%s__%s" % ('_'.join(securities) if len(securities) <= 1 else len(securities), strategyName, start_tick_date, endTradeDate if endTradeDate else "Now")
 
 if __name__ == "__main__":
     account = Account()
@@ -264,7 +220,7 @@ if __name__ == "__main__":
     backtester = BackTester(
             "backtest_zscoreMomentumPortfolio.ini",
             account=account,
-            startTickDate=19901010,
+            start_tick_date=19901010,
             startTradeDate=19901010,
             endTradeDate=20131010)
     backtester.setup()

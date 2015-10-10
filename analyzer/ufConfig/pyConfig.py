@@ -13,13 +13,14 @@ LOG = logging.getLogger()
 
 class PyConfig(object):
     ''' class that handles configuration '''
-    def __init__(self):
+    def __init__(self, config_file):
         ''' Constructor '''
         self.__dir = None
         self.parser = None
         self.full_path = None
+        self.load_config_from(config_file)
 
-    def setSource(self, file_name):
+    def load_config_from(self, file_name):
         '''
         set source file name
         assume the file_name is full path first, if can't find it, use conf directory

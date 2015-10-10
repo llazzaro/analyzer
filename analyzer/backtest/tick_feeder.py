@@ -42,16 +42,16 @@ class Feeder(object):
 
 class TickFeeder(Feeder):
 
-    def _get_symbol_data(self, securities):
-        yield self.dam.read_ticks(securities, self.start, self.end)
+    def _get_symbol_data(self, securities, start, end):
+        return self.dam.read_ticks(securities, start, end)
 
-    def load(self):
+    def load(self, start, end):
         ''' generate time_ticks_dict based on source DAM'''
         LOG.info('Start loading ticks, it may take a while......')
 
         LOG.info('Indexing ticks for %s' % self.securities)
         try:
-            yield self._get_symbol_data(self.securities)
+            return self._get_symbol_data(self.securities, start, end)
 
         except KeyboardInterrupt as ki:
             LOG.warn("Interrupted by user  when loading ticks for %s" % self.securities)
@@ -76,15 +76,15 @@ class TickFeeder(Feeder):
 
 class QuoteFeeder(Feeder):
 
-    def _get_symbol_data(self, securities):
-        yield self.dam.read_quotes(securities, self.start, self.end)
+    def _get_symbol_data(self, securities, start, end):
+        yield self.dam.read_quotes(securities, start, end)
 
-    def load(self):
+    def load(self, start, end):
         LOG.info('Start loading quotes, it may take a while......')
 
         LOG.info('Indexing quotes for %s' % self.securities)
         try:
-            yield self._get_symbol_data(self.securities)
+            yield self._get_symbol_data(self.securities, start, end)
 
         except KeyboardInterrupt as ki:
             LOG.warn("Interrupted by user  when loading quotes for %s" % self.securities)
