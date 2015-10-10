@@ -49,6 +49,7 @@ class TradingCenter(object):
 
     def _check_and_execute_order(self, order):
         tick=self.last_tick_dict.get(order.symbol)
+        self.session.add(tick)
         if tick is None:
             LOG.debug("_check_and_execute_order no open orders for symbol %s with tick %s, price %s" % (order.symbol, tick.time, tick.close))
             return
@@ -56,9 +57,12 @@ class TradingCenter(object):
         if order.is_order_met(tick):
             self._execute_order(tick, order)
 
+        self.session.commit()
+
     def _execute_order(self, tick, order):
         LOG.debug("executing order {0}".format(order))
         order.update_stage(FillOrderStage())
+        self.session.add(order)
 
     def open_orders(self, security):
         return filter(lambda order: order.current_stage.is_open, self.session.query(Order).filter(security=security))
