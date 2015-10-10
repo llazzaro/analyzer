@@ -33,6 +33,12 @@ class TradingCenter(object):
         for order in self.open_orders:
             order.cancel()
 
+    # TODO: check to use the same BUS
+    def listen(self, security):
+        ''' register to a security
+        '''
+        self.pubsub.subscribe(security.symbol)
+
     def consume(self):
         for tick in self.pubsub.listen():
             self._check_and_execute_orders(tick)

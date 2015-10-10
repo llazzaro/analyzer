@@ -5,7 +5,6 @@ Created on Nov 6, 2011
 '''
 import logging
 import traceback
-from redis import StrictRedis
 
 LOG=logging.getLogger(__name__)
 
@@ -15,7 +14,6 @@ class Feeder(object):
         This class has the responsability of broadcast ticks or quotes
     '''
     def __init__(self, publisher, interval_timeout=2, start=0, end=None, trade_type=None, securities=None, dam=None):
-        self.subs={}  # securityIds: sub
         self.securities = securities
         self.inde_symbol=None
         self.dam=dam
@@ -29,9 +27,10 @@ class Feeder(object):
         self.trade_type=trade_type
         self.publisher = publisher
 
-    def execute(self):
-        for security, data in self.load():
-            self.publisher.publish(security.symbol, data)
+    def execute(self, start, end):
+        for security, feed in self.load(start, end):
+            for data in feed:
+                self.publisher.publish(security.symbol, data)
 
     def complete(self):
         '''
@@ -39,13 +38,6 @@ class Feeder(object):
         write history to saver
         '''
         self.session.commit()
-
-    def validate(self, subscriber):
-        securities = []
-        return securities
-
-    def register(self, instance, symbol):
-        pass
 
 
 class TickFeeder(Feeder):
