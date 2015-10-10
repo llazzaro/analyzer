@@ -13,7 +13,6 @@ from pyStock import Base
 from pyStock.models.money import Currency, Money
 from pyStock.models import (
     Stock,
-    Tick,
     BuyOrder,
     CancelOrderStage,
     Account,

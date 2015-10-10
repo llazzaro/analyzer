@@ -51,19 +51,19 @@ class TestTradingEngine(unittest.TestCase):
         trading_engine = TradingEngine()
         trading_engine.register(self.strategy)
 
-        self.assertEquals(len(trading_engine.subscribers.keys()), 2)
+        self.assertEquals(len(trading_engine.strategies), 2)
         trading_engine.unregister(self.strategy)
         # since this was the only strategy check if events is empty
-        self.assertEquals(len(trading_engine.subscribers.keys()), 0)
+        self.assertEquals(len(trading_engine.strategies), 0)
         trading_engine.register(self.strategy)
         trading_engine.register(self.strategy2)
-        self.assertEquals(len(trading_engine.subscribers.keys()), 2)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[0]), 2)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[1]), 2)
+        self.assertEquals(len(trading_engine.strategies), 2)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.strategies.values())[0]), 2)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.strategies.values())[1]), 2)
         trading_engine.unregister(self.strategy)
-        self.assertEquals(len(trading_engine.subscribers.keys()), 2)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[0]), 1)
-        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.subscribers.values())[1]), 1)
+        self.assertEquals(len(trading_engine.strategies.keys()), 2)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.strategies.values())[0]), 1)
+        self.assertEquals(len(map(lambda vdict: vdict.keys(), trading_engine.strategies.values())[1]), 1)
 
     def test_consume_ticks(self):
         pass

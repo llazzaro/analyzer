@@ -8,6 +8,8 @@ from pyStock.models import (
     Account,
     Owner,
     Broker,
+    Stock,
+    Exchange,
 )
 from pyStock.models.money import Money, Currency
 from sqlalchemy.orm.session import Session
@@ -22,6 +24,12 @@ if __name__ == "__main__":
     Base.metadata.create_all(connection)
 
     session = Session(connection)
+    usd = Currency(name='Dollar', code='USD')
+    nasdaq = Exchange(name='NASDAQ', currency=usd)
+    stock_ebay = Stock(symbol='EBAY', exchange=nasdaq, ISIN='US2786421030', description='')
+    session.add(stock_ebay)
+    session.commit()
+
     owner = Owner(name='Lucky')
     broker = Broker(name='Cheap Broker')
     account = Account(owner=owner, broker=broker)

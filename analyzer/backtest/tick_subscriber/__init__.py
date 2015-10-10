@@ -33,12 +33,7 @@ class TickSubscriber(object):
         ''' call back for executed order with order id, should be overridden '''
         return
 
+    #@abc.abstractmethod
     def complete(self):
         raise NotImplementedError('Abtract class method called')
 
-    @abc.abstractmethod
-    def subscriber_rules(self):
-        ''' call back from framework
-            return (symbolRe, rules)
-        '''
-        return

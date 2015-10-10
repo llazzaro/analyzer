@@ -7,7 +7,6 @@ import logging
 
 from pyStock.models import (
     Order,
-    Security,
     FillOrderStage,
 )
 
@@ -16,31 +15,14 @@ LOG=logging.getLogger()
 
 class TradingCenter(object):
     '''
-    trading center
-    Note: set metricNames before adding accounts
+        receives orders
     '''
-    def __init__(self, session):
+    def __init__(self, session, pubsub):
         self.session = session
-        self.updated_order={}  # SAMPLE {"EBAY": [order1, order2]}
-        self.placed_order={}  # SAMPLE {"EBAY": [order1, order2]}
-        self.last_tick_dict=None
-
-    def updated_order(self):
-        updatedOrder={}
-        updatedOrder.update(self.updated_order)
-        self.updated_order.clear()
-
-        return updatedOrder
-
-    def placed_order(self):
-        placedOrder={}
-        placedOrder.update(self.placed_order)
-        self.placed_order.clear()
-
-        return placedOrder
+        self.pubsub = pubsub
 
     def cancel_order(self, order):
-        if order not in self.open_orders:
+        if order not in self.open_orders(order.security):
             LOG.warn("Can't cancel order %s because there is no open orders for symbol {0}".format(order.security.symbol))
             return
 
@@ -51,20 +33,19 @@ class TradingCenter(object):
         for order in self.open_orders:
             order.cancel()
 
-    def consume_ticks(self, raw_tick):
-        self._check_and_execute_orders(raw_tick)
+    def consume(self):
+        for tick in self.pubsub.listen():
+            self._check_and_execute_orders(tick)
 
-    def _check_and_execute_orders(self, raw_tick):
-        self.last_tick_dict=raw_tick
-        for symbol, tick in raw_tick.iteritems():
-            LOG.debug("_check_and_execute_orders symbol %s with tick %s, price %s" % (symbol, tick.time, tick.close))
-            if symbol not in self.open_orders:
-                LOG.debug("_check_and_execute_orders no open orders for symbol %s with tick %s, price %s" % (symbol, tick.time, tick.close))
-                continue
+    def _check_and_execute_orders(self, tick):
+        LOG.debug("_check_and_execute_orders symbol %s with tick %s, price %s" % (tick.security, tick.time, tick.close))
+        if self.open_orders(tick.security).count() == 0:
+            LOG.debug("_check_and_execute_orders no open orders for symbol %s with tick %s, price %s" % (tick.security, tick.time, tick.close))
+            return
 
-            for order in self.open_orders[symbol].values():
-                if order.is_order_met(tick):
-                    self._execute_order(tick, order)
+        for order in self.open_orders(tick.security):
+            if order.is_order_met(tick):
+                self._execute_order(tick, order)
 
     def _check_and_execute_order(self, order):
         tick=self.last_tick_dict.get(order.symbol)
@@ -76,25 +57,8 @@ class TradingCenter(object):
             self._execute_order(tick, order)
 
     def _execute_order(self, tick, order):
-        account=order.account
         LOG.debug("executing order {0}".format(order))
-        account.execute(order, tick)
         order.update_stage(FillOrderStage())
 
-    def open_order_by_id(self, id):
-        return self.session.query(Order).filter_by(id=id).first()
-
-    def open_orders_by_symbol(self, symbol):
-        return self.session.query(Order).join(Security).filter_by(symbol=symbol)
-
-    @property
-    def open_orders(self):
-        return filter(lambda order: order.current_stage.is_open, self.session.query(Order).all())
-
-    @property
-    def filled_orders(self):
-        return filter(lambda order: order.current_stage.is_filled, self.session.query(Order).all())
-
-    @property
-    def cancel_orders(self):
-        return filter(lambda order: order.current_stage.is_cancel, self.session.query(Order).all())
+    def open_orders(self, security):
+        return filter(lambda order: order.current_stage.is_open, self.session.query(Order).filter(security=security))

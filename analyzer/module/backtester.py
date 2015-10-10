@@ -8,6 +8,7 @@ import sys
 import traceback
 import logging
 import logging.config
+from threading import Thread
 
 from pyStock.models import Account
 
@@ -37,7 +38,8 @@ from analyzer.backtest.constant import (
 )
 # from analyzer.backtest.metric import BasicMetric
 
-from threading import Thread
+
+from pyStock.models import Security
 
 LOG = logging.getLogger()
 
@@ -45,7 +47,7 @@ LOG = logging.getLogger()
 class BackTester(object):
     ''' back testing '''
 
-    def __init__(self, config_file, session, account, startTickDate=0, startTradeDate=0, endTradeDate=None, symbolLists=None):
+    def __init__(self, config_file, session, account, startTickDate=0, startTradeDate=0, endTradeDate=None, securities=None):
         LOG.debug("Loading config from %s" % config_file)
         self.config = PyConfig()
         self.session = session
@@ -53,7 +55,7 @@ class BackTester(object):
 
         self.account = account
         self.__mCalculator = MetricManager()
-        self.__symbolLists = symbolLists
+        self.securities = []
         self.start_tick_date = startTickDate
         self.__startTradeDate = startTradeDate
         self.end_trade_date = endTradeDate
@@ -64,9 +66,9 @@ class BackTester(object):
         self.config.override(CONF_ANALYZER_SECTION, CONF_START_TRADE_DATE, self.__startTradeDate)
         self.config.override(CONF_ANALYZER_SECTION, CONF_END_TRADE_DATE, self.end_trade_date)
         self._setupLog()
-        LOG.debug(self.__symbolLists)
-        if not self.__symbolLists:
-            self._loadSymbols()
+        LOG.debug(self.securities)
+        if not self.securities:
+            self._load_securities(securities)
 
     @property
     def trade_type(self):
@@ -77,47 +79,48 @@ class BackTester(object):
         if self.config.getSection("loggers"):
             logging.config.fileConfig(self.config.getFullPath())
 
-    def _runOneTest(self, symbols):
+    def _run_one_test(self, security):
         ''' run one test '''
-        LOG.debug("Running backtest for %s" % symbols)
+        LOG.debug("Running backtest for %s" % security)
         runner = TestRunner(
                 self.config,
                 self.session,
                 self.__mCalculator,
-                symbols,
+                [security],
                 self.start_tick_date,
                 self.end_trade_date,
                 self.account,
                 self.trade_type)
         runner.runTest()
 
-    def _loadSymbols(self):
-        ''' find symbols'''
-        symbolFile = self.config.get(CONF_ANALYZER_SECTION, CONF_SYMBOL_FILE)
-        assert symbolFile is not None, "%s is required in config file" % CONF_SYMBOL_FILE
+    def _load_securities(self, securities):
+        symbol_filename = self.config.get(CONF_ANALYZER_SECTION, CONF_SYMBOL_FILE)
+        assert symbol_filename is not None, "%s is required in config file" % CONF_SYMBOL_FILE
 
-        LOG.info("loading symbols from %s" % os.path.join(self.config.getDir(), symbolFile))
-        if not self.__symbolLists:
-            self.__symbolLists = []
+        LOG.info("loading securities from %s" % os.path.join(self.config.getDir(), symbol_filename))
 
-        with open(os.path.join(self.config.getDir(), symbolFile), "r") as f:
-            for symbols in f:
-                if symbols not in self.__symbolLists:
-                    self.__symbolLists.append([symbol.strip() for symbol in symbols.split()])
+        with open(os.path.join(self.config.getDir(), symbol_filename), "r") as securities_file:
+            for symbol in securities_file:
+                if securities not in map(lambda sec: sec.symbol, self.securities):
+                    security = self.session.query(Security).filter_by(symbol=symbol.strip('\n')).first()
+                    if security is None:
+                        LOG.info('No security {0}. Skipping. Please import stock information'.format(symbol))
+                        continue
+                    self.securities.append(security)
 
-        assert self.__symbolLists, "None symbol provided"
+        assert self.securities, "None symbol provided"
 
     def runTests(self):
         ''' run tests '''
-        for symbols in self.__symbolLists:
+        for security in self.securities:
             try:
-                self._runOneTest(symbols)
+                self._run_one_test(security)
             except KeyboardInterrupt:
                 LOG.error("User Interrupted")
                 sys.exit("User Interrupted")
             except BaseException as excp:
                 LOG.error("Unexpected error when backtesting %s -- except %s, traceback %s"
-                          % (symbols, excp, traceback.format_exc(8)))
+                          % (self.securities, excp, traceback.format_exc(8)))
 
     def getMetrics(self):
         ''' get all metrics '''
@@ -130,7 +133,7 @@ class BackTester(object):
 
 class TestRunner(object):
     ''' back testing '''
-    def __init__(self, config, session, metric_manager, symbols, startTickDate, endTradeDate, account, trade_type):
+    def __init__(self, config, session, metric_manager, securities, startTickDate, endTradeDate, account, trade_type):
         self.config = config
         self.trade_type = trade_type
         self.account = account
@@ -140,14 +143,14 @@ class TestRunner(object):
             start=startTickDate,
             end=endTradeDate,
             trade_type=trade_type,
-            symbols=symbols,
+            securities=securities,
             dam=self._create_dam(""),  # no need to set symbol because it's batch operation
         )
         self.trading_center = TradingCenter(session)
         self.trading_engine = TradingEngine()
         self.index_helper = IndexHelper()
         self.history = History()
-        self.symbols = symbols
+        self.securities = securities
         self.metric_manager = metric_manager
 
         self._setup_trading_center()
@@ -185,7 +188,7 @@ class TestRunner(object):
                     saverName,
                     {
                         'db': outputDbPrefix + getBackTestResultDbName(
-                            self.symbols,
+                            self.securities,
                             self.config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
                             self.start_tick_date,
                             self.end_trade_date)})
@@ -194,7 +197,7 @@ class TestRunner(object):
         ''' setup tradingEngine'''
         strategy = StrategyFactory.create_strategy(
                 self.config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
-                self.symbols,
+                self.securities,
                 self.config)
 
         # register on trading engine
@@ -202,13 +205,14 @@ class TestRunner(object):
 
     def _execute(self):
         ''' run backtest '''
-        LOG.info("Running backtest for %s" % self.symbols)
+        LOG.info("Running backtest for %s" % self.securities)
         # start trading engine
         thread = Thread(target=self.trading_engine.runListener, args=())
         thread.setDaemon(False)
         thread.start()
 
         # start tickFeeder
+        # share a queue and this should be another thread
         self.tick_feeder.execute()
         self.tick_feeder.complete()
 
@@ -219,7 +223,7 @@ class TestRunner(object):
             timePositions = [tp for tp in timePositions if tp[0] >= startTradeDate]
 
         # get and save metrics
-        # result = self.__metric_manager.calculate(self.symbols, timePositions, self.tick_feeder.iTimePositionDict)
+        # result = self.__metric_manager.calculate(self.securities, timePositions, self.tick_feeder.iTimePositionDict)
         # self.__saver.writeMetrics(result[BasicMetric.START_TIME],
         #                          result[BasicMetric.END_TIME],
         #                          result[BasicMetric.MIN_TIME_VALUE][1],
@@ -231,7 +235,7 @@ class TestRunner(object):
         #                          self.account.holdings)
 
         # write to saver
-        LOG.debug("Writing state to saver")
+        # LOG.debug("Writing state to saver")
         # self.__saver.commit()
 
         self.trading_engine.stop()
@@ -250,9 +254,9 @@ class TestRunner(object):
 
 
 # ###########Util function################################
-def getBackTestResultDbName(symbols, strategyName, startTickDate, endTradeDate):
+def getBackTestResultDbName(securities, strategyName, startTickDate, endTradeDate):
     ''' get table name for back test result'''
-    return "%s__%s__%s__%s" % ('_'.join(symbols) if len(symbols) <= 1 else len(symbols), strategyName, startTickDate, endTradeDate if endTradeDate else "Now")
+    return "%s__%s__%s__%s" % ('_'.join(securities) if len(securities) <= 1 else len(securities), strategyName, startTickDate, endTradeDate if endTradeDate else "Now")
 
 if __name__ == "__main__":
     account = Account()
