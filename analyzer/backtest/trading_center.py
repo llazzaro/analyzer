@@ -29,9 +29,11 @@ class TradingCenter(object):
         order.cancel()
         LOG.debug("Order canceled: {0}" .format(order.pk))
 
-    def cancel_all_open_orders(self):
-        for order in self.open_orders:
+    def cancel_orders(self):
+        orders_to_cancel = filter(lambda order: order.current_stage.is_open, self.session.query(Order).all())
+        for order in orders_to_cancel:
             order.cancel()
+        return orders_to_cancel
 
     # TODO: check to use the same BUS
     def listen(self, security):
@@ -71,4 +73,4 @@ class TradingCenter(object):
         self.session.add(order)
 
     def open_orders(self, security):
-        return filter(lambda order: order.current_stage.is_open, self.session.query(Order).filter(security=security))
+        return filter(lambda order: order.current_stage.is_open, self.session.query(Order).filter_by(security=security))

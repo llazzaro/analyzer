@@ -21,6 +21,8 @@ from pyStock.models import (
     Exchange,
 )
 
+from mockredis import MockRedis
+
 
 # Connect to the database and create the schema within a transaction
 engine = create_engine('sqlite://')
@@ -32,6 +34,7 @@ Base.metadata.create_all(connection)
 class testTradingCenter(unittest.TestCase):
 
     def setUp(self):
+        self.pubsub = MockRedis()
         self.trans = connection.begin()
         self.session = Session(connection)
 
@@ -46,22 +49,7 @@ class testTradingCenter(unittest.TestCase):
         self.trans.rollback()
         self.session.close()
 
-    def test_open_orders_by_order_id(self):
-        stock=Stock(symbol='symbol', description='a stock', ISIN='US123456789', exchange=self.exchange)
-        order1=BuyOrder(account=self.account, security=stock, price=13.2, share=10)
-        order2=BuyOrder(account=self.account, security=stock, price=13.25, share=10)
-        self.session.add(order1)
-        self.session.add(order2)
-        self.session.commit()
-
-        tc=TradingCenter(self.session)
-        order=tc.open_order_by_id(order1.id)
-        self.assertEquals(order1, order)
-
-        order=tc.open_order_by_id(100)
-        self.assertEquals(None, order)
-
-    def testGetOpenOrdersBySymbol(self):
+    def test_retrievet_open_orders(self):
 
         stock=Stock(symbol='symbol', description='a stock', ISIN='US123456789', exchange=self.exchange)
         order1=BuyOrder(account=self.account, security=stock, price=13.2, share=10)
@@ -70,8 +58,8 @@ class testTradingCenter(unittest.TestCase):
         self.session.add(order2)
         self.session.commit()
 
-        tc=TradingCenter(self.session)
-        orders=tc.open_orders_by_symbol('symbol')
+        tc=TradingCenter(self.session, self.pubsub)
+        orders=tc.open_orders(stock)
         self.assertEquals([order1, order2], list(orders))
 
     def testCancelOrder(self):
@@ -84,11 +72,11 @@ class testTradingCenter(unittest.TestCase):
         self.session.add(order2)
         self.session.commit()
 
-        tc=TradingCenter(self.session)
+        tc=TradingCenter(self.session, self.pubsub)
 
         order1.cancel()
-        self.assertEquals([order2], tc.open_orders)
-        self.assertEquals([order1], tc.cancel_orders)
+        self.assertEquals([order2], tc.open_orders(stock))
+        self.assertEquals([order1], tc.cancel_orders())
         self.assertEquals(CancelOrderStage, type(order1.current_stage))
 
         order2.cancel()
@@ -104,9 +92,9 @@ class testTradingCenter(unittest.TestCase):
         self.session.add(order2)
         self.session.commit()
 
-        tc=TradingCenter(self.session)
+        tc=TradingCenter(self.session, self.pubsub)
 
-        tc.cancel_all_open_orders()
+        tc.cancel_orders()
 
         self.assertEquals([], tc.open_orders)
 

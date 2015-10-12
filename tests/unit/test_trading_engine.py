@@ -1,5 +1,4 @@
-import unittest
-
+from unittest import TestCase
 from analyzer.ufConfig.pyConfig import PyConfig
 
 from analyzer.backtest.constant import (
@@ -9,11 +8,13 @@ from analyzer.backtest.constant import (
 from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
 from analyzer.backtest.trading_engine import TradingEngine
 
+from mockredis import MockRedis
 
-class TestTradingEngine(unittest.TestCase):
+
+class TestTradingEngine(TestCase):
     def setUp(self):
-        self.config = PyConfig()
-        self.config.setSource("test_config.ini")
+        self.pubsub = MockRedis()
+        self.config = PyConfig("test_config.ini")
         self.symbols = ['GOOG']
         self.strategy = StrategyFactory.create_strategy(
                 self.config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
@@ -28,30 +29,23 @@ class TestTradingEngine(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_stop(self):
-        trading_engine = TradingEngine()
-        self.assertFalse(trading_engine._stop)
-        trading_engine.stop()
-
-        self.assertTrue(trading_engine._stop)
-
     def test_register_strategy(self):
-        trading_engine = TradingEngine()
+        trading_engine = TradingEngine(self.pubsub)
         trading_engine.register(self.strategy)
 
         # lets check that the trading engine was setup correctly
-        for key in trading_engine.subscribers.keys():
-            event = trading_engine.subscribers[key]
+        for key in trading_engine.strategies:
+            event = trading_engine.strategies[key]
             for strategy in event.keys():
                 self.assertEquals(self.strategy, strategy)
                 self.assertEquals(self.symbols, event[strategy]['symbols'])
                 self.assertEquals(0, event[strategy]['fail'])
 
     def test_unregister_strategy(self):
-        trading_engine = TradingEngine()
+        trading_engine = TradingEngine(self.pubsub)
         trading_engine.register(self.strategy)
 
-        self.assertEquals(len(trading_engine.strategies), 2)
+        self.assertEquals(len(trading_engine.strategies), 1)
         trading_engine.unregister(self.strategy)
         # since this was the only strategy check if events is empty
         self.assertEquals(len(trading_engine.strategies), 0)

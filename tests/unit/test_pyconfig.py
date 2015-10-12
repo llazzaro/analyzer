@@ -9,8 +9,7 @@ from analyzer.ufConfig.pyConfig import PyConfig
 
 class testPyConfig(unittest.TestCase):
     def setUp(self):
-        self.config = PyConfig()
-        self.config.setSource("test.ini")
+        self.config = PyConfig("test.ini")
 
     def tearDown(self):
         pass

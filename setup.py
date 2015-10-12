@@ -46,6 +46,7 @@ setup(name='analyzer',
           'xlrd',
           'xlwt',
           'matplotlib',
-          'coveralls'
+          'coveralls',
+          'mockredispy'
       ],
       test_suite='tests')
