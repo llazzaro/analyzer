@@ -11,8 +11,6 @@ import logging.config
 from pyStock.models import Account
 
 from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
-from analyzer.backtest.index_helper import IndexHelper
-from analyzer.backtest.history import History
 from analyzer.backtest.constant import (
     CONF_ANALYZER_SECTION,
     CONF_TRADE_TYPE,
@@ -28,11 +26,12 @@ LOG = logging.getLogger(__name__)
 class BackTester(object):
     ''' back testing '''
 
-    def __init__(self, config, pubsub, session, account, securities, start_tick_date=0, start_trade_date=0, end_trade_date=None):
+    def __init__(self, config, pubsub, session, account, securities, trading_engine, start_tick_date=0, start_trade_date=0, end_trade_date=None):
         self.config = config
         self.pubsub = pubsub
         self.pubsub = pubsub
         self.session = session
+        self.trading_engine = trading_engine
 
         self.account = account
         self.securities = securities
@@ -49,6 +48,7 @@ class BackTester(object):
     def _run_one_test(self, security):
         ''' run one test '''
         LOG.debug("Running backtest for %s" % security)
+        # TODO: TestRunner is coupled here
         runner = TestRunner(
                 self.config,
                 self.pubsub,
@@ -58,7 +58,8 @@ class BackTester(object):
                 self.start_tick_date,
                 self.end_trade_date,
                 self.account,
-                self.trade_type)
+                self.trade_type,
+                self.trading_engine)
         runner.run_test()
 
     def run_tests(self):
@@ -84,20 +85,19 @@ class BackTester(object):
 
 class TestRunner(object):
     ''' back testing '''
-    def __init__(self, config, pubsub, session, metric_manager, securities, start_tick_date, end_trade_date, account, trade_type):
+    def __init__(self, config, pubsub, session, metric_manager, securities, start_tick_date, end_trade_date, account, trade_type, trading_engine):
+        # TODO: remove metric manager
         self.config = config
         self.trade_type = trade_type
         self.account = account
         self.start_tick_date = start_tick_date
         self.end_trade_date = end_trade_date
-        self.index_helper = IndexHelper()
-        self.history = History()
         self.securities = securities
         self.metric_manager = metric_manager
+        self.trading_engine = trading_engine
 
         # wire things together
         self._setup_strategy()
-        self.trading_engine.tickProxy = self.tick_feeder
 
     def _setup_strategy(self):
         ''' setup tradingEngine'''

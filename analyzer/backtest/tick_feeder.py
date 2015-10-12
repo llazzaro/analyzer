@@ -52,32 +52,18 @@ class TickFeeder(Feeder):
         except BaseException as excp:
             LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.securities, excp, traceback.format_exc(8)))
 
-    def _load_index(self):
-        ''' generate time_ticks_dict based on source DAM'''
-        LOG.debug('Start loading index ticks, it may take a while......')
-        try:
-            return self._get_symbol_data([self.index_symbol])
-
-        except KeyboardInterrupt as ki:
-            LOG.warn("Interrupted by user  when loading ticks for %s" % self.index_symbol)
-            raise ki
-        except BaseException as excp:
-            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.index_symbol, excp, traceback.format_exc(8)))
-
-        return {}
-
 
 class QuoteFeeder(Feeder):
 
     def _get_symbol_data(self, securities, start, end):
-        yield self.dam.read_quotes(securities, start, end)
+        return self.dam.read_quotes(securities, start, end)
 
     def load(self, start, end):
         LOG.info('Start loading quotes, it may take a while......')
 
         LOG.info('Indexing quotes for %s' % self.securities)
         try:
-            yield self._get_symbol_data(self.securities, start, end)
+            return self._get_symbol_data(self.securities, start, end)
 
         except KeyboardInterrupt as ki:
             LOG.warn("Interrupted by user  when loading quotes for %s" % self.securities)

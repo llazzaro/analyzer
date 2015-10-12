@@ -3,7 +3,6 @@ from threading import Thread
 
 from analyzer.module.backtester import BackTester
 from analyzer.backtest.tick_feeder import TickFeeder
-from analyzer.backtest.trading_engine import TradingEngine
 from analyzer.backtest.trading_center import TradingCenter
 from analyzerdam.DAMFactory import DAMFactory
 
@@ -50,17 +49,8 @@ class TradingCenterThread(Thread):
             self.trading_center.consume()
 
 
-class TradingEngineThread(Thread):
-    def __init__(self, pubsub):
-        Thread.__init__(self)
-        self.trading_engine = TradingEngine(pubsub)
-
-    def run(self):
-        pass
-
-
 class BackTesterThread(Thread):
-    def __init__(self, config, pubsub, session, account, securities, start_tick_date=0, start_trade_date=0, end_trade_date=None):
+    def __init__(self, config, pubsub, session, account, securities, trading_engine, start_tick_date=0, start_trade_date=0, end_trade_date=None):
         Thread.__init__(self)
         self.back_tester=BackTester(
                 config=config,
@@ -68,6 +58,7 @@ class BackTesterThread(Thread):
                 session=session,
                 account=account,
                 securities=securities,
+                trading_engine=trading_engine,
                 start_tick_date=start_tick_date,
                 start_trade_date=start_trade_date,
                 end_trade_date=end_trade_date)

@@ -29,10 +29,8 @@ class TradingEngine(object):
     def register(self, strategy):
         self.strategies.add(strategy)
 
-    def unregister(self, subscriber):
-        ''' unregister subscriberscrip
-        '''
-        raise NotImplementedError('not yet')
+    def unregister(self, strategy):
+        self.strategies.remove(strategy)
 
     def consume(self):
         for tick in self.pubsub.listen():

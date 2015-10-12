@@ -76,12 +76,10 @@ class testTradingCenter(unittest.TestCase):
 
         order1.cancel()
         self.assertEquals([order2], tc.open_orders(stock))
-        self.assertEquals([order1], tc.cancel_orders())
+        # cancel open orders
+        self.assertEquals([order2], tc.cancel_orders())
         self.assertEquals(CancelOrderStage, type(order1.current_stage))
-
-        order2.cancel()
-        self.assertEquals([], tc.open_orders)
-        self.assertEquals([order1, order2], tc.cancel_orders)
+        self.assertEquals([], tc.open_orders(stock))
 
     def testCancelAllOpenOrders(self):
         security=Stock(symbol='symbol', description='a stock', ISIN='US123456789', exchange=self.exchange)
@@ -96,7 +94,7 @@ class testTradingCenter(unittest.TestCase):
 
         tc.cancel_orders()
 
-        self.assertEquals([], tc.open_orders)
+        self.assertEquals([], tc.open_orders(security))
 
     def testConsume(self):
         pass
