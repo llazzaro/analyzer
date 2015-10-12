@@ -21,12 +21,12 @@ class StrategyFactory(object):
                      'zscoreMomentumPortfolio': ZscoreMomentumPortfolioStrategy}
 
     @staticmethod
-    def create_strategy(name, symbols, config):
+    def create_strategy(name, securities, config):
         ''' create a metric '''
         if name not in StrategyFactory.STRATEGY_DICT:
             raise UfException(Errors.INVALID_STRATEGY_NAME,
                               "Strategy name is invalid %s" % name)
-        return StrategyFactory.STRATEGY_DICT[name](config, symbols)
+        return StrategyFactory.STRATEGY_DICT[name](config, securities)
 
     @staticmethod
     def available_strategies():

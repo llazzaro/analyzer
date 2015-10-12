@@ -32,13 +32,6 @@ class Feeder(object):
             for data in feed:
                 self.publisher.publish(security.symbol, data)
 
-    def complete(self):
-        '''
-        call when complete feeding ticks
-        write history to saver
-        '''
-        self.session.commit()
-
 
 class TickFeeder(Feeder):
 

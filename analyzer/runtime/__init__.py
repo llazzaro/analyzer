@@ -1,6 +1,7 @@
 from datetime import datetime
 from threading import Thread
 
+from analyzer.module.backtester import BackTester
 from analyzer.backtest.tick_feeder import TickFeeder
 from analyzer.backtest.trading_engine import TradingEngine
 from analyzer.backtest.trading_center import TradingCenter
@@ -36,7 +37,6 @@ class TickFeederThread(Thread):
     def run(self):
         self.last_execution = datetime.now()
         self.tick_feeder.execute(self.last_execution, datetime.now())
-        self.tick_feeder.complete()
 
 
 class TradingCenterThread(Thread):
@@ -60,4 +60,17 @@ class TradingEngineThread(Thread):
 
 
 class BackTesterThread(Thread):
-    pass
+    def __init__(self, config, pubsub, session, account, securities, start_tick_date=0, start_trade_date=0, end_trade_date=None):
+        Thread.__init__(self)
+        self.back_tester=BackTester(
+                config=config,
+                pubsub=pubsub,
+                session=session,
+                account=account,
+                securities=securities,
+                start_tick_date=start_tick_date,
+                start_trade_date=start_trade_date,
+                end_trade_date=end_trade_date)
+
+    def run(self):
+        self.back_tester.run_tests()
