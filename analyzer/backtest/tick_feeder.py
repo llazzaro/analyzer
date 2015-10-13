@@ -30,6 +30,7 @@ class Feeder(object):
     def execute(self, start, end):
         for security, feed in self.load(start, end):
             for data in feed:
+                LOG.debug('Publish new tick')
                 self.publisher.publish(security.symbol, data)
 
 
@@ -42,7 +43,7 @@ class TickFeeder(Feeder):
         ''' generate time_ticks_dict based on source DAM'''
         LOG.info('Start loading ticks, it may take a while......')
 
-        LOG.info('Indexing ticks for %s' % self.securities)
+        LOG.info('Indexing ticks for {0}'.format(self.securities))
         try:
             return self._get_symbol_data(self.securities, start, end)
 

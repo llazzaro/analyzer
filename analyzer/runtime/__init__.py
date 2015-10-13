@@ -51,10 +51,18 @@ class TradingCenterThread(Thread):
 
 class TradingEngineThread(Thread):
 
-    def __init__(self, session, pubsub):
+    def __init__(self, pubsub, securities):
         Thread.__init__(self)
-        self.trading_engine = TradingEngine(session, pubsub)
+        self.trading_engine = TradingEngine(pubsub)
+        for security in securities:
+            self.trading_engine.listen(security)
 
     def run(self):
         while True:
             self.trading_engine.consume()
+
+
+class MetricThread(Thread):
+
+    def __init__(self, session, pubsub):
+        Thread.__init__(self)

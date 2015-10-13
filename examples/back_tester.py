@@ -6,6 +6,8 @@ Created on Dec 3, 2011
 from datetime import datetime
 from datetime import timedelta
 from redis import StrictRedis
+
+from analyzer import init_logging
 from analyzer.runtime import (
     TickFeederThread,
     #     TradingCenterThread,
@@ -28,6 +30,7 @@ from sqlalchemy.engine import create_engine
 from pyStock.models import Base
 
 if __name__ == "__main__":
+    init_logging('debug')
     config = {
         'host': 'localhost',
         'port': 6379,
@@ -56,7 +59,7 @@ if __name__ == "__main__":
 
     start = datetime.now()
     end = datetime.now() - timedelta(days=30)
-    th_trading_engine = TradingEngineThread(session, redis_conn)
+    th_trading_engine = TradingEngineThread(redis_conn.pubsub(), securities=[stock_ebay])
 
     th_tick_feeder.start()
     th_trading_engine.start()

@@ -15,7 +15,9 @@ LOG=logging.getLogger()
 
 class TradingCenter(object):
     '''
-        receives orders
+        receives actions from strategies
+        could use metrics (option)
+        creates orders, cancel orders, etc
     '''
     def __init__(self, session, pubsub):
         self.session = session

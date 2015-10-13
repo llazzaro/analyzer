@@ -10,7 +10,9 @@ LOG=logging.getLogger(__name__)
 
 class TradingEngine(object):
     '''
-        has the responsability to execute strategies and send orders "the brain"
+        has the responsability to keep track
+        and execute strategies
+        Sends actions to trading center
     '''
     def __init__(self, pubsub):
         self.strategies = set()
@@ -22,8 +24,7 @@ class TradingEngine(object):
         self._stop=True
 
     def listen(self, security):
-        ''' register to a security
-        '''
+        LOG.info('Trading engine listening to {0}'.format(security.symbol))
         self.pubsub.subscribe(security.symbol)
 
     def register(self, strategy):
@@ -32,8 +33,12 @@ class TradingEngine(object):
     def unregister(self, strategy):
         self.strategies.remove(strategy)
 
+    def _convert_raw_tick_to_object(self):
+        pass
+
     def consume(self):
         for tick in self.pubsub.listen():
+            LOG.info('New tick {0}'.format(tick))
             for strategy in self.strategies:
                 # strategy will create actions
                 # traging center will see the actions
