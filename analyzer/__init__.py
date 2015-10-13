@@ -1,13 +1,25 @@
-""" ultrafinance package """
+import sys
 import logging
-LOG = logging.getLogger()
 
-# library paths
-"""
-LIB = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'lib')
-for entry in os.listdir(LIB):
-    filePath = os.path.join(LIB, entry)
-    if os.path.isfile(filePath) and re.search(r".*\.(zip|egg|tar\.gz|tgz)$", filePath):
-        LOG.debug("...appending library %s to sys.path" % filePath)
-        sys.path.append(filePath)
-"""
+
+def init_logging(level=None):
+    logger = logging.getLogger('analyzer')
+    if not level:
+        logger.setLevel(logging.INFO)
+    if level == 'warning':
+        logger.setLevel(logging.WARN)
+    if level == 'debug':
+        logger.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    fh = logging.FileHandler('tesis.log')
+    fh.setLevel(logging.INFO)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.INFO)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    logger.addHandler(fh)
+    logger.addHandler(ch)
