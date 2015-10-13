@@ -1,9 +1,9 @@
 from datetime import datetime
 from threading import Thread
 
-from analyzer.module.backtester import BackTester
 from analyzer.backtest.tick_feeder import TickFeeder
 from analyzer.backtest.trading_center import TradingCenter
+from analyzer.backtest.trading_engine import TradingEngine
 from analyzerdam.DAMFactory import DAMFactory
 
 from analyzer.backtest.constant import (
@@ -49,19 +49,12 @@ class TradingCenterThread(Thread):
             self.trading_center.consume()
 
 
-class BackTesterThread(Thread):
-    def __init__(self, config, pubsub, session, account, securities, trading_engine, start_tick_date=0, start_trade_date=0, end_trade_date=None):
+class TradingEngineThread(Thread):
+
+    def __init__(self, session, pubsub):
         Thread.__init__(self)
-        self.back_tester=BackTester(
-                config=config,
-                pubsub=pubsub,
-                session=session,
-                account=account,
-                securities=securities,
-                trading_engine=trading_engine,
-                start_tick_date=start_tick_date,
-                start_trade_date=start_trade_date,
-                end_trade_date=end_trade_date)
+        self.trading_engine = TradingEngine(session, pubsub)
 
     def run(self):
-        self.back_tester.run_tests()
+        while True:
+            self.trading_engine.consume()

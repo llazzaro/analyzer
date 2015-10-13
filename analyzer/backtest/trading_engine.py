@@ -35,6 +35,9 @@ class TradingEngine(object):
     def consume(self):
         for tick in self.pubsub.listen():
             for strategy in self.strategies:
-                # strategy will create orders
-                # traging center will see the order as open
-                strategy.update(tick)
+                # strategy will create actions
+                # traging center will see the actions
+                # and will place orders
+                action = strategy.update(tick)
+                if action:
+                    self.pubsub.publish('action', action)

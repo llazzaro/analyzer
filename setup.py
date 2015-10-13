@@ -23,6 +23,7 @@ setup(name='analyzer',
 
       install_not_requires=[
           'hbase-thrift>=0.20.4',
+          'redis',
           'pandas',
           'xlwt',
           'xlrd',
@@ -31,8 +32,8 @@ setup(name='analyzer',
       packages=['analyzer'],
       include_package_data=True,
       install_requires=[
-          'scipy>=0.13.0',
           'numpy>=1.5.1',
+          'scipy>=0.13.0',
           'beautifulsoup4',
           'SQLAlchemy>=0.8',
           'pbr<1.7.0',

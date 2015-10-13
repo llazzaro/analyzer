@@ -8,11 +8,9 @@ from datetime import timedelta
 from redis import StrictRedis
 from analyzer.runtime import (
     TickFeederThread,
-    BackTesterThread,
     #     TradingCenterThread,
-    #    TradingEngineThread,
+    TradingEngineThread,
 )
-from analyzer.backtest.trading_engine import TradingEngine
 from analyzer.ufConfig.pyConfig import PyConfig
 from pyStock.models import (
     Account,
@@ -58,8 +56,8 @@ if __name__ == "__main__":
 
     start = datetime.now()
     end = datetime.now() - timedelta(days=30)
-    trading_engine = TradingEngine(redis_conn)
-    th_back_tester=BackTesterThread(config=config, pubsub=redis_conn, session=session, account=account, securities=[stock_ebay], trading_engine=trading_engine)
-    th_back_tester.start()
+    th_trading_engine = TradingEngineThread(session, redis_conn)
+
     th_tick_feeder.start()
+    th_trading_engine.start()
     Session.remove()
