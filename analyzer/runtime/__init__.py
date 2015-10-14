@@ -51,9 +51,9 @@ class TradingCenterThread(Thread):
 
 class TradingEngineThread(Thread):
 
-    def __init__(self, pubsub, securities):
+    def __init__(self, pubsub, securities, strategy):
         Thread.__init__(self)
-        self.trading_engine = TradingEngine(pubsub)
+        self.trading_engine = TradingEngine(pubsub, strategy)
         for security in securities:
             self.trading_engine.listen(security)
 

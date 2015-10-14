@@ -13,6 +13,11 @@ from analyzer.runtime import (
     #     TradingCenterThread,
     TradingEngineThread,
 )
+from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
+from analyzer.backtest.constant import (
+    CONF_ULTRAFINANCE_SECTION,
+    CONF_STRATEGY_NAME,
+)
 from analyzer.ufConfig.pyConfig import PyConfig
 from pyStock.models import (
     Account,
@@ -54,12 +59,14 @@ if __name__ == "__main__":
     account.deposit(Money(amount=1000, currency=pesos))
     config_file = "backtest_smaPortfolio.ini"
     config = PyConfig(config_file)
+    strategy = StrategyFactory.create_strategy(config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
+                                               config.getSection(CONF_ULTRAFINANCE_SECTION))
 
     th_tick_feeder = TickFeederThread(config, redis_conn, securities=[stock_ebay])
 
     start = datetime.now()
     end = datetime.now() - timedelta(days=30)
-    th_trading_engine = TradingEngineThread(redis_conn.pubsub(), securities=[stock_ebay])
+    th_trading_engine = TradingEngineThread(redis_conn.pubsub(), securities=[stock_ebay], strategy=strategy)
 
     th_tick_feeder.start()
     th_trading_engine.start()
