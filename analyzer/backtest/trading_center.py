@@ -31,7 +31,7 @@ class TradingCenter(object):
     def listen(self, security):
         self.pubsub.subscribe('actions')
 
-    def _serialize(self, action):
+    def _load_action(self, action):
         raise NotImplementedError()
 
     def consume(self):
@@ -39,8 +39,9 @@ class TradingCenter(object):
         # you could filter action source strategy.
         # combine strategies, etc
         for action in self.pubsub.listen():
-            action = self._serialize(action)
-            action.execute()
+            action = self._load_action(action)
+            if not action.is_backtest:
+                action.execute()
 
     def open_orders(self, security):
         return filter(lambda order: order.current_stage.is_open, self.session.query(Order).filter_by(security=security))

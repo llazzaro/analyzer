@@ -1,15 +1,10 @@
-'''
-Created on Dec 3, 2011
-
-@author: ppa
-'''
 from datetime import datetime
 from datetime import timedelta
 from redis import StrictRedis
 
 from analyzer import init_logging
 from analyzer.runtime import (
-    BackTesterThread,
+    TickFeederThread,
     #     TradingCenterThread,
     TradingEngineThread,
 )
@@ -62,7 +57,7 @@ if __name__ == "__main__":
     strategy = StrategyFactory.create_strategy(config.get(CONF_ULTRAFINANCE_SECTION, CONF_STRATEGY_NAME),
                                                config.getSection(CONF_ULTRAFINANCE_SECTION))
 
-    th_tick_feeder = BackTesterThread(config, redis_conn, securities=[stock_ebay])
+    th_tick_feeder = TickFeederThread(config, redis_conn, securities=[stock_ebay])
 
     start = datetime.now()
     end = datetime.now() - timedelta(days=30)

@@ -4,6 +4,7 @@ from threading import Thread
 from analyzer.backtest.tick_feeder import TickFeeder
 from analyzer.backtest.trading_center import TradingCenter
 from analyzer.backtest.trading_engine import TradingEngine
+from analyzer.backtest.backtester import BackTester
 from analyzerdam.DAMFactory import DAMFactory
 
 from analyzer.backtest.constant import (
@@ -14,6 +15,10 @@ from analyzer.backtest.constant import (
 
 
 class TickFeederThread(Thread):
+    """
+        This is used to retrieve realtime info
+        and broadcast to all trading engines
+    """
 
     def __init__(self, config, pubsub, securities, start=None, end=None):
         Thread.__init__(self)
@@ -66,3 +71,22 @@ class MetricThread(Thread):
 
     def __init__(self, session, pubsub):
         Thread.__init__(self)
+
+
+class BackTesterThread(Thread):
+    """
+        This thread will retrieve info from the
+        store and it will broadcast it
+        to all trading engines.
+        Trading Center must ignore this
+        since is not realtime
+
+    """
+
+    def __init__(self, session, pubsub):
+        Thread.__init__(self)
+        self.backtester = BackTester(session, pubsub)
+
+    def run(self):
+        while True:
+            self.backtester.consume()
