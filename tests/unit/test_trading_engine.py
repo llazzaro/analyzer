@@ -30,8 +30,7 @@ class TestTradingEngine(TestCase):
         pass
 
     def test_register_strategy(self):
-        trading_engine = TradingEngine(self.pubsub)
-        trading_engine.register(self.strategy)
+        trading_engine = TradingEngine(self.pubsub, self.strategy)
 
         # lets check that the trading engine was setup correctly
 #        for key in trading_engine.strategies:
@@ -40,20 +39,6 @@ class TestTradingEngine(TestCase):
 #                self.assertEquals(self.strategy, strategy)
 #                self.assertEquals(self.symbols, event[strategy]['symbols'])
 #                self.assertEquals(0, event[strategy]['fail'])
-
-    def test_unregister_strategy(self):
-        trading_engine = TradingEngine(self.pubsub)
-        trading_engine.register(self.strategy)
-
-        self.assertEquals(len(trading_engine.strategies), 1)
-        trading_engine.unregister(self.strategy)
-        # since this was the only strategy check if events is empty
-        self.assertEquals(len(trading_engine.strategies), 0)
-        trading_engine.register(self.strategy)
-        trading_engine.register(self.strategy2)
-        self.assertEquals(len(trading_engine.strategies), 2)
-        trading_engine.unregister(self.strategy)
-        self.assertEquals(len(trading_engine.strategies), 1)
 
     def test_consume_ticks(self):
         pass

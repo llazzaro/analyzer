@@ -4,21 +4,23 @@ Created on Dec 26, 2011
 @author: ppa
 '''
 
-from analyzerstrategies.periodStrategy import PeriodStrategy
-from analyzerstrategies.smaStrategy import SMAStrategy
-from analyzerstrategies.smaPortfolioStrategy import SMAPortfolioStrategy
-from analyzerstrategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
-from analyzerstrategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
+# from analyzerstrategies.periodStrategy import PeriodStrategy
+from analyzerstrategies.sma_strategy import SMAStrategy
+# from analyzerstrategies.smaPortfolioStrategy import SMAPortfolioStrategy
+# from analyzerstrategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
+# from analyzerstrategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
 
 from analyzer.lib.errors import Errors, UfException
 
 
 class StrategyFactory(object):
-    STRATEGY_DICT = {'period': PeriodStrategy,
-                     'sma': SMAStrategy,
-                     'smaPortfolio': SMAPortfolioStrategy,
-                     'zscorePortfolio': ZscorePortfolioStrategy,
-                     'zscoreMomentumPortfolio': ZscoreMomentumPortfolioStrategy}
+    STRATEGY_DICT = {
+            # 'period': PeriodStrategy,
+            'sma': SMAStrategy,
+            # 'smaPortfolio': SMAPortfolioStrategy,
+            # 'zscorePortfolio': ZscorePortfolioStrategy,
+            # 'zscoreMomentumPortfolio': ZscoreMomentumPortfolioStrategy
+    }
 
     @staticmethod
     def create_strategy(name, securities, config):

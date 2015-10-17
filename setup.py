@@ -48,6 +48,6 @@ setup(name='analyzer',
           'xlwt',
           'matplotlib',
           'coveralls',
-          'mockredispy'
+          'mockredispy',
       ],
       test_suite='tests')

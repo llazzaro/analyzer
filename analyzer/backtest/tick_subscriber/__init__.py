@@ -25,7 +25,7 @@ class TickSubscriber(object):
         raise NotImplementedError('Abtract class method called')
 
     @abc.abstractmethod
-    def tick_update(self, ticks):
+    def update(self, ticks):
         ''' consume ticks '''
         return
 
