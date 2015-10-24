@@ -10,8 +10,9 @@ class BackTester(object):
         broadcast actions for backtesting
     '''
 
-    def __init_(self, store, start, end):
+    def __init__(self, store, securities, start=None, end=None):
         self.store = store
+        self.securities = securities
         self.start = start
         self.end = end
 
@@ -19,7 +20,7 @@ class BackTester(object):
         raise NotImplementedError()
 
     def consume(self):
-        for tick in self.retrieve_ticks(self.start, self.end):
+        for tick in self._retrieve_ticks(self.start, self.end):
             LOG.info('New tick {0}'.format(tick))
             # strategy will create actions
             # traging center will see the actions

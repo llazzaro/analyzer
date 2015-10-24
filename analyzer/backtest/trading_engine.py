@@ -15,7 +15,7 @@ class TradingEngine(object):
         Sends actions to trading center
     '''
     def __init__(self, pubsub, strategy):
-        self.strategies = strategy
+        self.strategy = strategy
         self.trading_center=None
         self.pubsub = pubsub
 
