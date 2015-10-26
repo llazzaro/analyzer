@@ -6,12 +6,13 @@ Created on Dec 3, 2011
 from datetime import datetime
 from datetime import timedelta
 from redis import StrictRedis
+from arctic import Arctic
+from Quandl import Quandl
 
 from analyzer import init_logging
 from analyzer.runtime import (
     BackTesterThread,
     #     TradingCenterThread,
-    TradingEngineThread,
 )
 from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
 from analyzer.backtest.constant import (
@@ -36,6 +37,8 @@ from pyStock.models import Base
 
 if __name__ == "__main__":
     init_logging('debug')
+    store = Arctic('localhost')
+
     config = {
         'host': 'localhost',
         'port': 6379,
@@ -59,15 +62,24 @@ if __name__ == "__main__":
     account.deposit(Money(amount=1000, currency=pesos))
     config_file = "backtest_smaPortfolio.ini"
     config = PyConfig(config_file)
-    strategy = StrategyFactory.create_strategy(config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
-                                               config.getSection(CONF_ANALYZER_SECTION), config)
+    strategy = StrategyFactory.create_strategy(
+            config.get(CONF_ANALYZER_SECTION, CONF_STRATEGY_NAME),
+            account,
+            config.getSection(CONF_ANALYZER_SECTION),
+            config,
+            store)
+    securities = [stock_ebay]
+    store.initialize_library(nasdaq.name)
 
-    th_tick_feeder = BackTesterThread(config, redis_conn, securities=[stock_ebay])
+    library = store[nasdaq.name]
+
+    api_key= 'iDQ6AjPzsi2G6Lxc3Xuw'
+    ebay = Quandl.get("GOOG/NASDAQ_EBAY", authtoken=api_key)
+    library.write(stock_ebay.symbol, ebay, metadata={'source': 'Quandl'})
 
     start = datetime.now()
     end = datetime.now() - timedelta(days=30)
-    th_trading_engine = TradingEngineThread(redis_conn.pubsub(), securities=[stock_ebay], strategy=strategy)
+    th_backtest = BackTesterThread(store, redis_conn, securities=securities, start=start, end=end)
 
-    th_tick_feeder.start()
-    th_trading_engine.start()
+    th_backtest.start()
     Session.remove()

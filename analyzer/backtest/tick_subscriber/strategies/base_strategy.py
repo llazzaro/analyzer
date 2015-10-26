@@ -16,7 +16,7 @@ class BaseStrategy(TickSubscriber):
 
     def __init__(self, name, account):
         super(BaseStrategy, self).__init__(name)
-        self.account=None
+        self.account=account
         self.trading_engine=None
         self.config_dict={}
 

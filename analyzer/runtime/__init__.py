@@ -83,9 +83,9 @@ class BackTesterThread(Thread):
 
     """
 
-    def __init__(self, session, pubsub, securities):
+    def __init__(self, store, pubsub, securities, start, end):
         Thread.__init__(self)
-        self.backtester = BackTester(session, pubsub, securities)
+        self.backtester = BackTester(store, pubsub, securities, start, end)
 
     def run(self):
         while True:
