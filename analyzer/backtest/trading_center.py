@@ -23,7 +23,7 @@ class TradingCenter(object):
         self.pubsub = pubsub
 
     def cancel_orders(self):
-        orders_to_cancel = filter(lambda order: order.current_stage.is_open, self.session.query(Order).all())
+        orders_to_cancel = list(filter(lambda order: order.current_stage.is_open, self.session.query(Order).all()))
         for order in orders_to_cancel:
             order.cancel()
         return orders_to_cancel
@@ -44,4 +44,4 @@ class TradingCenter(object):
                 action.execute()
 
     def open_orders(self, security):
-        return filter(lambda order: order.current_stage.is_open, self.session.query(Order).filter_by(security=security))
+        return list(filter(lambda order: order.current_stage.is_open, self.session.query(Order).filter_by(security=security)))
