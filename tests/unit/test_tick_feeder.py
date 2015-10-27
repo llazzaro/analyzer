@@ -3,7 +3,7 @@ Created on Jan 18, 2011
 
 @author: ppa
 '''
-import mox
+from mox3 import mox
 import unittest
 from datetime import timedelta
 import datetime

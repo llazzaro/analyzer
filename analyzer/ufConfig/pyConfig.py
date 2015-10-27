@@ -3,7 +3,7 @@ Created on Nov 30, 2010
 
 @author: ppa
 '''
-import ConfigParser
+import configparser
 from os import path
 from analyzer.lib.errors import UfException, Errors
 
@@ -35,7 +35,7 @@ class PyConfig(object):
                 LOG.error(msg)
                 raise UfException(Errors.FILE_NOT_EXIST, msg)
 
-        self.parser = ConfigParser.SafeConfigParser(defaults={"here": self.__dir})
+        self.parser = configparser.SafeConfigParser(defaults={"here": self.__dir})
         self.parser.read(fullPath)
         self.full_path = fullPath
 
