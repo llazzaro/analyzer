@@ -5,3 +5,4 @@
 dist
 build
 analyzer.egg-info
+conf/realtime_sma_cex.ini
