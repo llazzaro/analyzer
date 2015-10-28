@@ -32,6 +32,7 @@ setup(name='analyzer',
       packages=['analyzer'],
       include_package_data=True,
       install_requires=[
+          'redis',
           'numpy>=1.5.1',
           'scipy>=0.13.0',
           'beautifulsoup4',

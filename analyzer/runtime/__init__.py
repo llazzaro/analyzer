@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from threading import Thread
 
-from analyzer.backtest.tick_feeder import TickFeeder
+from analyzer.backtest.tick_feeder import TickFeeder, QuoteFeeder
 from analyzer.backtest.trading_center import TradingCenter
 from analyzer.backtest.trading_engine import TradingEngine
 from analyzer.backtest.backtester import BackTester
@@ -9,8 +9,6 @@ from analyzerdam.DAMFactory import DAMFactory
 
 from analyzer.backtest.constant import (
     CONF_ANALYZER_SECTION,
-    CONF_INPUT_DAM,
-    CONF_INPUT_DB,
 )
 
 
@@ -23,7 +21,12 @@ class TickFeederThread(Thread):
     def __init__(self, config, pubsub, securities, start=None, end=None):
         Thread.__init__(self)
         self.config = config
-        self.tick_feeder = TickFeeder(
+        if config.get(CONF_ANALYZER_SECTION, 'feed_type') == 'quote':
+            klass = QuoteFeeder
+        if config.get(CONF_ANALYZER_SECTION, 'feed_type') == 'tick':
+            klass = TickFeeder
+
+        self.tick_feeder = klass(
             publisher=pubsub,
             securities=securities,
             dam=self._create_dam(""),  # no need to set symbol because it's batch operation
@@ -31,16 +34,20 @@ class TickFeederThread(Thread):
         self.last_execution = datetime.now()
 
     def _create_dam(self, symbol):
-        dam_name = self.config.get(CONF_ANALYZER_SECTION, CONF_INPUT_DAM)
-        input_db = self.config.get(CONF_ANALYZER_SECTION, CONF_INPUT_DB)
-        dam = DAMFactory.createDAM(dam_name, {'db': input_db})
+        dam_name = self.config.get(CONF_ANALYZER_SECTION, 'dam')
+        dam = DAMFactory.createDAM(dam_name, self.config)
         dam.symbol = symbol
 
         return dam
 
     def run(self):
-        self.last_execution = datetime.now()
-        self.tick_feeder.execute(self.last_execution, datetime.now())
+        while True:
+            import ipdb
+            ipdb.set_trace()
+            self.last_execution = datetime.now()
+            self.tick_feeder.execute(self.last_execution, datetime.now() + timedelta(minutes=10))
+            import time
+            time.sleep(2000)
 
 
 class TradingCenterThread(Thread):

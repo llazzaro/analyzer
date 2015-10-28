@@ -1,8 +1,4 @@
-'''
-Created on Nov 6, 2011
-
-@author: ppa
-'''
+import json
 import logging
 
 LOG=logging.getLogger(__name__)
@@ -14,11 +10,16 @@ class TradingEngine(object):
         Sends actions to trading center
         does not store anything, used for realtime
     '''
-    def __init__(self, pubsub, securities, start=None, end=None):
+    def __init__(self, pubsub, strategy, start=None, end=None):
         self.pubsub = pubsub
-        self.securities = securities
+        self.strategy = strategy
         self.start = start
         self.end = end
+        self.securities = []
+
+    def listen(self, security):
+        self.securities.append(security)
+        self.pubsub.subscribe(security.symbol)
 
     def execute(self, tick):
         action = self.strategy.update(tick)
@@ -29,7 +30,11 @@ class TradingEngine(object):
         for security in self.securities:
             for tick in self.pubsub.listen():
                 LOG.info('New tick {0}'.format(tick))
+                if tick['type'] in 'subscribe':
+                    continue
                 # strategy will create actions
                 # traging center will see the actions
                 # and will place orders
+                tick['security'] = security
+                tick['data'] = json.loads(tick['data'].decode('utf-8').replace("'", '"'))
                 self.execute(tick)
