@@ -6,7 +6,7 @@ Created on Dec 26, 2011
 
 # from analyzerstrategies.periodStrategy import PeriodStrategy
 from analyzerstrategies.sma_strategy import SMAStrategy
-from analyzerstrategies.smaPortfolioStrategy import SMAPortfolioStrategy
+from analyzerstrategies.sma_portfolio_strategy import SMAPortfolioStrategy
 # from analyzerstrategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
 # from analyzerstrategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
 
@@ -17,13 +17,13 @@ class StrategyFactory(object):
     STRATEGY_DICT = {
             # 'period': PeriodStrategy,
             'sma': SMAStrategy,
-            'smaPortfolio': SMAPortfolioStrategy,
+            'sma_portfolio': SMAPortfolioStrategy,
             # 'zscorePortfolio': ZscorePortfolioStrategy,
             # 'zscoreMomentumPortfolio': ZscoreMomentumPortfolioStrategy
     }
 
     @staticmethod
-    def create_strategy(name, account, securities, config, store):
+    def create_strategy(name, account, securities, config, store=None):
         ''' create a metric '''
         if name not in StrategyFactory.STRATEGY_DICT:
             raise UfException(Errors.INVALID_STRATEGY_NAME,
