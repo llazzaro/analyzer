@@ -9,6 +9,11 @@ Created on Jan 20, 2012
 
 CONF_APP_MAIN = 'app_main'
 
+BUY = 'buy'
+SELL_SHORT = 'sell_short'
+SELL = 'sell'
+BUY_TO_COVER = 'buy_to_cover'
+
 CONF_ANALYZER_SECTION = 'analyzer'
 CONF_TRADE_TYPE = 'backtest.tradetype'
 CONF_SYMBOL_FILE = 'backtest.symbolfile'
