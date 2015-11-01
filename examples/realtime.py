@@ -3,7 +3,7 @@ from redis import StrictRedis
 from analyzer import init_logging
 from analyzer.runtime import (
     TickFeederThread,
-    #     TradingCenterThread,
+    TradingCenterThread,
     TradingEngineThread,
 )
 from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
@@ -63,10 +63,12 @@ if __name__ == "__main__":
             store=None)
 
     th_tick_feeder = TickFeederThread(config, redis_conn, securities=[bitcoin])
-    #th_tick_feeder.setDaemon(True)
+    # th_tick_feeder.setDaemon(True)
     th_trading_engine = TradingEngineThread(redis_conn.pubsub(), securities=[bitcoin], strategy=strategy)
-    #th_trading_engine.setDaemon(True)
+    th_trading_center = TradingCenterThread(session, redis_conn.pubsub())
+    # th_trading_engine.setDaemon(True)
 
-    th_tick_feeder.start()
+    th_trading_center.start()
     th_trading_engine.start()
+    th_tick_feeder.start()
     Session.remove()

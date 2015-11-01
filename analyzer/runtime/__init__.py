@@ -42,12 +42,10 @@ class TickFeederThread(Thread):
 
     def run(self):
         while True:
-            import ipdb
-            ipdb.set_trace()
             self.last_execution = datetime.now()
             self.tick_feeder.execute(self.last_execution, datetime.now() + timedelta(minutes=10))
             import time
-            time.sleep(2000)
+            time.sleep(2)
 
 
 class TradingCenterThread(Thread):
