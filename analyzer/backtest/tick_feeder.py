@@ -6,7 +6,7 @@ Created on Nov 6, 2011
 import logging
 import traceback
 
-LOG=logging.getLogger(__name__)
+log=logging.getLogger(__name__)
 
 
 class Feeder(object):
@@ -30,7 +30,7 @@ class Feeder(object):
     def execute(self, start, end):
         for security, feed in self.load(start, end):
             for data in feed:
-                LOG.debug('Publish new tick')
+                log.debug('Publish new tick')
                 self.publisher.publish(security.symbol, data)
 
 
@@ -41,17 +41,16 @@ class TickFeeder(Feeder):
 
     def load(self, start, end):
         ''' generate time_ticks_dict based on source DAM'''
-        LOG.info('Start loading ticks, it may take a while......')
+        log.info('Start loading ticks, it may take a while......')
 
-        LOG.info('Indexing ticks for {0}'.format(self.securities))
         try:
             return self._get_symbol_data(self.securities, start, end)
 
         except KeyboardInterrupt as ki:
-            LOG.warn("Interrupted by user  when loading ticks for %s" % self.securities)
+            log.warn("Interrupted by user  when loading ticks for %s" % self.securities)
             raise ki
         except BaseException as excp:
-            LOG.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.securities, excp, traceback.format_exc(8)))
+            log.warn("Unknown exception when loading ticks for %s: except %s, traceback %s" % (self.securities, excp, traceback.format_exc(8)))
 
 
 class QuoteFeeder(Feeder):
@@ -60,14 +59,12 @@ class QuoteFeeder(Feeder):
         return self.dam.read_quotes(securities, start, end)
 
     def load(self, start, end):
-        LOG.info('Start loading quotes, it may take a while......')
-
-        LOG.info('Indexing quotes for %s' % self.securities)
+        log.info('Indexing quotes for %s' % self.securities)
         try:
             return self._get_symbol_data(self.securities, start, end)
 
         except KeyboardInterrupt as ki:
-            LOG.warn("Interrupted by user  when loading quotes for %s" % self.securities)
+            log.warn("Interrupted by user  when loading quotes for %s" % self.securities)
             raise ki
         except BaseException as excp:
-            LOG.warn("Unknown exception when loading quotes for %s: except %s, traceback %s" % (self.securities, excp, traceback.format_exc(8)))
+            log.warn("Unknown exception when loading quotes for %s: except %s, traceback %s" % (self.securities, excp, traceback.format_exc(8)))

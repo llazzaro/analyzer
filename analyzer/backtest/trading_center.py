@@ -9,7 +9,7 @@ from pyStock.models import (
     Order,
 )
 
-LOG=logging.getLogger()
+log=logging.getLogger()
 
 
 class TradingCenter(object):
@@ -32,13 +32,15 @@ class TradingCenter(object):
         self.pubsub.subscribe('actions')
 
     def _load_action(self, action):
-        raise NotImplementedError()
+        pass
 
     def consume(self):
         # this trading center executes all actions
         # you could filter action source strategy.
         # combine strategies, etc
         for action in self.pubsub.listen():
+            log.info('Received action {0}'.format(action))
+            return
             action = self._load_action(action)
             if not action.is_backtest:
                 action.execute()
