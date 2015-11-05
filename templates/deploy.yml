@@ -1,0 +1,30 @@
+- hosts: analyzer
+  user: leonardo
+  sudo: True
+
+  vars:
+    app_name: analyzer
+    apps_dir: /home/leonardo/analyzer
+
+  tasks:
+    - name: ensure log directory
+      action: file dest=${apps_dir}/${app_name}/log state=directory
+
+    - name: deploy code from repository
+      action: git repo=$repo_url dest=${apps_dir}/${app_name}/src remote=$repo_remote version=$repo_version
+
+    - name: install dependencies into virtualenv
+      action: pip requirements=${apps_dir}/${app_name}/src/requirements.txt virtualenv=${apps_dir}/${app_name}/venv state=present
+
+    - name: create supervisor program config
+      action: template src=templates/supervisor.ini dest=/etc/supervisor/${app_name}.ini
+      notify:
+        - restart app
+
+    - name: start app
+      action: supervisorctl name=${app_name} state=started
+
+  handlers:
+    - name: restart app
+      action: supervisorctl name=${app_name} state=restarted
+

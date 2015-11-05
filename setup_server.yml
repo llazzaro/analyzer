@@ -1,0 +1,57 @@
+---
+- hosts: analyzer
+  user: leonardo
+  sudo: True
+
+  vars:
+    app_name: analyzer
+    apps_dir: /home/leonardo/analyzer
+
+  tasks:
+    - name: ensure apt cache is up to date
+      apt: update_cache=yes
+    - name: install package {{item}}
+      apt: name={{item}}
+      with_items:
+        - build-essential
+        - postgresql
+        - libpq-dev
+        - python-psycopg2
+        - python3-dev
+        - python3-numpy
+        - gfortran
+        - libopenblas-dev
+        - liblapack-dev
+        - python3-scipy
+        - python-setuptools
+        - redis-server
+        - mongodb
+
+    - name: install pip
+      action: easy_install name=pip
+
+    - name: install various libraries with pip
+      action: pip name={{item}} state=present
+      with_items:
+        - virtualenv
+        - supervisor
+
+    - name: create supervisord config folder
+      action: file dest=/etc/supervisor state=directory owner=root
+
+    - name: create supervisord config
+      action: template src=templates/supervisord.conf dest=/etc/supervisord.conf
+
+    - name: create supervisord init script
+      action: template src=templates/supervisord.sh dest=/etc/init.d/supervisord mode=0755
+
+    - name: start supervisord service and have it run during system startup
+      action: service name=supervisord state=started enabled=yes
+
+    - name: create virtualenv
+      shell: virtualenv {{ apps_dir }}/venv
+             creates={{ apps_dir }}/venv/bin/activate
+
+    - name: copy virtualenv wrapper file
+      synchronize: src=pyvenv
+                   dest={{ apps_dir }}/venv/bin/pyvenv
