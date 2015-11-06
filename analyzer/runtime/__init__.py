@@ -5,6 +5,7 @@ from analyzer.backtest.tick_feeder import TickFeeder, QuoteFeeder
 from analyzer.backtest.trading_center import TradingCenter
 from analyzer.backtest.trading_engine import TradingEngine
 from analyzer.backtest.backtester import BackTester
+from analyzer.alarms import EmailAlarm
 from analyzerdam.DAMFactory import DAMFactory
 
 from analyzer.backtest.constant import (
@@ -45,7 +46,7 @@ class TickFeederThread(Thread):
             self.last_execution = datetime.now()
             self.tick_feeder.execute(self.last_execution, datetime.now() + timedelta(minutes=10))
             import time
-            time.sleep(2)
+            time.sleep(3)
 
 
 class TradingCenterThread(Thread):
@@ -61,9 +62,9 @@ class TradingCenterThread(Thread):
 
 class TradingEngineThread(Thread):
 
-    def __init__(self, pubsub, securities, strategy):
+    def __init__(self, redis, securities, strategy):
         Thread.__init__(self)
-        self.trading_engine = TradingEngine(pubsub, strategy)
+        self.trading_engine = TradingEngine(redis, strategy)
         for security in securities:
             self.trading_engine.listen(security)
 
@@ -95,3 +96,16 @@ class BackTesterThread(Thread):
     def run(self):
         while True:
             self.backtester.consume()
+
+
+class AlarmThread(Thread):
+
+    def __init__(self, pubsub, config, channel):
+        Thread.__init__(self)
+        self.alarm = EmailAlarm(pubsub, config)
+        self.alarm.listen(channel)
+
+    def run(self):
+        while True:
+            self.alarm.consume()
+

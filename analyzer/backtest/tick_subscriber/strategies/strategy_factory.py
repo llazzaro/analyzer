@@ -23,12 +23,12 @@ class StrategyFactory(object):
     }
 
     @staticmethod
-    def create_strategy(name, account, securities, config, store=None):
+    def create_strategy(name, account, config, library=None):
         ''' create a metric '''
         if name not in StrategyFactory.STRATEGY_DICT:
             raise UfException(Errors.INVALID_STRATEGY_NAME,
                               "Strategy name is invalid %s" % name)
-        return StrategyFactory.STRATEGY_DICT[name](account, config, securities, store)
+        return StrategyFactory.STRATEGY_DICT[name](account, config, library)
 
     @staticmethod
     def available_strategies():

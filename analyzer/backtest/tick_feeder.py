@@ -59,7 +59,7 @@ class QuoteFeeder(Feeder):
         return self.dam.read_quotes(securities, start, end)
 
     def load(self, start, end):
-        log.info('Indexing quotes for %s' % self.securities)
+        log.debug('Indexing quotes for %s' % self.securities)
         try:
             return self._get_symbol_data(self.securities, start, end)
 

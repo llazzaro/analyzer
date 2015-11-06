@@ -10,8 +10,9 @@ class TradingEngine(object):
         Sends actions to trading center
         does not store anything, used for realtime
     '''
-    def __init__(self, pubsub, strategy, start=None, end=None):
-        self.pubsub = pubsub
+    def __init__(self, redis, strategy, start=None, end=None):
+        self.redis = redis
+        self.pubsub = redis.pubsub()
         self.strategy = strategy
         self.start = start
         self.end = end
@@ -24,7 +25,7 @@ class TradingEngine(object):
     def execute(self, tick):
         action = self.strategy.update(tick)
         if action:
-            self.pubsub.publish('action', action)
+            self.redis.publish('action', action)
 
     def consume(self):
         for security in self.securities:
