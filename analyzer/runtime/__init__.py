@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 from threading import Thread
 
-from analyzer.backtest.tick_feeder import TickFeeder, QuoteFeeder
-from analyzer.backtest.trading_center import TradingCenter
-from analyzer.backtest.trading_engine import TradingEngine
+from analyzer.tick_feeder import TickFeeder, QuoteFeeder
+from analyzer.trading_center import TradingCenter
+from analyzer.trading_engine import TradingEngine
 from analyzer.backtest.backtester import BackTester
 from analyzer.alarms import EmailAlarm
 from analyzerdam.DAMFactory import DAMFactory
 
-from analyzer.backtest.constant import (
+from analyzer.constant import (
     CONF_ANALYZER_SECTION,
 )
 

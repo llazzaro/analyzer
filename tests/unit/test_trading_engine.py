@@ -1,12 +1,12 @@
 from unittest import TestCase
 from analyzer.ufConfig.pyConfig import PyConfig
 
-from analyzer.backtest.constant import (
+from analyzer.constant import (
     CONF_ANALYZER_SECTION,
     CONF_STRATEGY_NAME
 )
-# from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
-from analyzer.backtest.trading_engine import TradingEngine
+# from analyzer.tick_subscriber.strategies.strategy_factory import StrategyFactory
+from analyzer.trading_engine import TradingEngine
 
 from mockredis import MockRedis
 

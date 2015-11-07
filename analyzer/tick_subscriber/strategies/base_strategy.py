@@ -4,7 +4,7 @@ Created on Dec 25, 2011
 @author: ppa
 '''
 import abc
-from analyzer.backtest.tick_subscriber import TickSubscriber
+from analyzer.tick_subscriber import TickSubscriber
 
 import logging
 LOG=logging.getLogger()

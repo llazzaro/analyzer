@@ -8,8 +8,8 @@ from analyzer.runtime import (
     TradingEngineThread,
     AlarmThread,
 )
-from analyzer.backtest.tick_subscriber.strategies.strategy_factory import StrategyFactory
-from analyzer.backtest.constant import (
+from analyzer.tick_subscriber.strategies.strategy_factory import StrategyFactory
+from analyzer.constant import (
     CONF_ANALYZER_SECTION,
     CONF_STRATEGY_NAME,
 )

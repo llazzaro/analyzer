@@ -20,7 +20,7 @@ from pyStock.models import (
     SecurityQuote,
 )
 
-from analyzer.backtest.tick_feeder import TickFeeder, QuoteFeeder
+from analyzer.tick_feeder import TickFeeder, QuoteFeeder
 
 
 class TestTickFeeder(unittest.TestCase):

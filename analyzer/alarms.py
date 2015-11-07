@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 
-from analyzer.backtest.constant import (
+from analyzer.constant import (
     CONF_ANALYZER_SECTION,
 )
 

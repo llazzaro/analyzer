@@ -8,7 +8,7 @@ import unittest
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import Session
 
-from analyzer.backtest.trading_center import TradingCenter
+from analyzer.trading_center import TradingCenter
 from pyStock import Base
 from pyStock.models.money import Currency, Money
 from pyStock.models import (
