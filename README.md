@@ -16,13 +16,12 @@ Architecture
 
 ![Architecture](https://cloud.githubusercontent.com/assets/568181/10708823/4d2d9174-79ec-11e5-8390-1f8533faed53.png)
 
-Note: this project is still non working since I deleted DAM and model! there is a lot of work pending
 
-Originally DAM and model was in the ultrafinance, but I want to have DAM more as plugins.
-Also since I already have a relation model for stock market I wanted to adapt it to this project.
-Moving this two as new project will maintain analyzer code small and it will be only used for real time analize.
+Originally DAM and model were in the ultrafinance project, but I wanted to have DAM more as plugin.
+Since I already have a stock market relational model I wanted to adapt it for this project.
+Moving DAM and model to a new project will maintain a minimalistic analyzer code.
 
-So Please also check this projects:
+Check these projects:
 
  * Data Access https://github.com/llazzaro/analyzerdam 
  * Model https://github.com/llazzaro/pystock
