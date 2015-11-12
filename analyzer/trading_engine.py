@@ -1,7 +1,7 @@
 import json
 import logging
 
-LOG=logging.getLogger(__name__)
+log=logging.getLogger(__name__)
 
 
 class TradingEngine(object):
@@ -25,17 +25,17 @@ class TradingEngine(object):
     def execute(self, tick):
         action = self.strategy.update(tick)
         if action:
-            self.redis.publish('action', action)
+            self.redis.publish('action', {'action': action, 'tick': tick})
 
     def consume(self):
         for security in self.securities:
             for tick in self.pubsub.listen():
-                LOG.info('New tick {0}'.format(tick))
+                log.info('New tick {0}'.format(tick))
                 if tick['type'] in 'subscribe':
                     continue
                 # strategy will create actions
                 # traging center will see the actions
                 # and will place orders
                 tick['security'] = security
-                tick['data'] = json.loads(tick['data'].decode('utf-8').replace("'", '"'))
+                tick['data'] = json.loads(tick['data'].decode('utf-8').replace("'", '"').replace('u"', '"'))
                 self.execute(tick)

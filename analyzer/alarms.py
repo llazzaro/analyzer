@@ -35,5 +35,9 @@ class EmailAlarm(Alarm):
         server.ehlo()
         server.starttls()
         server.login(self.config.get(CONF_ANALYZER_SECTION, 'smtp_login'), self.config.get(CONF_ANALYZER_SECTION, 'smtp_password'))
-        server.send_message(msg)
+        try:
+            server.send_message(msg)
+        except AttributeError:
+            server.sendmail(msg['From'], [msg['To']], msg.as_string())
+
         server.quit()

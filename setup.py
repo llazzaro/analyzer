@@ -32,6 +32,8 @@ setup(name='analyzer',
       packages=['analyzer'],
       include_package_data=True,
       install_requires=[
+          'Quandl',
+          'requests',
           'arctic',
           'redis',
           'numpy>=1.5.1',

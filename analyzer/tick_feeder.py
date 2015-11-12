@@ -40,8 +40,7 @@ class TickFeeder(Feeder):
         return self.dam.read_ticks(securities, start, end)
 
     def load(self, start, end):
-        ''' generate time_ticks_dict based on source DAM'''
-        log.info('Start loading ticks, it may take a while......')
+        log.debug('Start loading ticks, it may take a while......')
 
         try:
             return self._get_symbol_data(self.securities, start, end)

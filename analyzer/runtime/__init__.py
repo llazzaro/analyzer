@@ -1,3 +1,4 @@
+import time
 from datetime import datetime, timedelta
 from threading import Thread
 
@@ -44,9 +45,8 @@ class TickFeederThread(Thread):
     def run(self):
         while True:
             self.last_execution = datetime.now()
-            self.tick_feeder.execute(self.last_execution, datetime.now() + timedelta(minutes=10))
-            import time
-            time.sleep(3)
+            self.tick_feeder.execute(self.last_execution, datetime.now() + timedelta(minutes=100))
+            time.sleep(2) # to avoid getting banned on cex
 
 
 class TradingCenterThread(Thread):
