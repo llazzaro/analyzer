@@ -5,7 +5,10 @@ Created on Dec 26, 2011
 '''
 
 # from analyzerstrategies.periodStrategy import PeriodStrategy
-from analyzerstrategies.sma_strategy import SMAStrategy
+from analyzerstrategies.sma_strategy import (
+    SMAStrategyTick,
+    SMAStrategyQuote,
+)
 #from analyzerstrategies.sma_portfolio_strategy import SMAPortfolioStrategy
 # from analyzerstrategies.zscorePortfolioStrategy import ZscorePortfolioStrategy
 # from analyzerstrategies.zscoreMomentumPortfolioStrategy import ZscoreMomentumPortfolioStrategy
@@ -16,7 +19,8 @@ from analyzer.lib.errors import Errors, UfException
 class StrategyFactory(object):
     STRATEGY_DICT = {
             # 'period': PeriodStrategy,
-            'sma': SMAStrategy,
+            'sma_tick': SMAStrategyTick,
+            'sma_quote': SMAStrategyTick,
             # 'sma_portfolio': SMAPortfolioStrategy,
             # 'zscorePortfolio': ZscorePortfolioStrategy,
             # 'zscoreMomentumPortfolio': ZscoreMomentumPortfolioStrategy
