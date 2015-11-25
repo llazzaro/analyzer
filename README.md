@@ -12,7 +12,38 @@ Donate bitcoins to this project.
 
 Python project for real-time financial analyzing and backtesting trading strategies
 
-Architecture
+#How to install
+
+```
+pip install analyzer
+```
+
+# How to use it
+
+After project installation the following executable will be available:
+
+* feeder
+* trading_center
+* trading_engine
+* alarms
+* backtester
+
+*feeder* will retrieve quotes or ticks from the configured DAM in the .ini file
+
+*trading_center* will process each quote or tick and execute the strategies selected on the .ini
+
+*trading_center* will execute order to the exchanger (example to cex.io)
+
+*alarms* if an action was triggered, this activate the alarms. Currently only EmailAlarm is implemented
+
+*backtester* uses .ini to back test strategies with tick or quote information
+
+## Example of realtime configuration
+```
+tmuxp load realtime_session.yml
+```
+
+#Architecture
 
 ![Architecture](https://cloud.githubusercontent.com/assets/568181/10708823/4d2d9174-79ec-11e5-8390-1f8533faed53.png)
 
