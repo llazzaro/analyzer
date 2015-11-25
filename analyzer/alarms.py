@@ -1,9 +1,12 @@
+import logging
 import smtplib
 from email.mime.text import MIMEText
 
 from analyzer.constant import (
     CONF_ANALYZER_SECTION,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class Alarm(object):
@@ -27,8 +30,10 @@ class Alarm(object):
 class EmailAlarm(Alarm):
 
     def execute(self, message):
+        subject = 'Analyzer Alarm {0}'.format(self.channel)
+        logger.info('Sending email with subject {0}'.format(subject))
         msg = MIMEText(str(message))
-        msg['Subject'] = 'Analyzer Alarm {0}'.format(self.channel)
+        msg['Subject'] = subject
         msg['From'] = self.config.get(CONF_ANALYZER_SECTION, 'alarm_from')
         msg['To'] = self.config.get(CONF_ANALYZER_SECTION, 'alarm_to')
         server = smtplib.SMTP(self.config.get(CONF_ANALYZER_SECTION, 'smtp_host'), self.config.get(CONF_ANALYZER_SECTION, 'smtp_port'))

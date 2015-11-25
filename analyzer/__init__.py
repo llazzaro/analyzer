@@ -2,8 +2,10 @@ import sys
 import logging
 
 
-def init_logging(level=None):
-    logger = logging.getLogger('analyzer')
+def init_logging(logger, level=None):
+    if not logger:
+        logger = logging.getLogger('analyzer')
+    logging.basicConfig()
     if not level:
         logger.setLevel(logging.INFO)
     if level == 'warning':
@@ -11,11 +13,11 @@ def init_logging(level=None):
     if level == 'debug':
         logger.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages
-    fh = logging.FileHandler('tesis.log')
+    fh = logging.FileHandler('analyzer.log')
     fh.setLevel(logging.INFO)
     # create console handler with a higher log level
     ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.INFO)
+    ch.setLevel(logging.DEBUG)
     # create formatter and add it to the handlers
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
