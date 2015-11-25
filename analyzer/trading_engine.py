@@ -22,8 +22,8 @@ class TradingEngine(object):
         self.securities.append(security)
         self.pubsub.subscribe(security.symbol)
 
-    def execute(self, tick):
-        action = self.strategy.update(tick)
+    def execute(self, security, tick):
+        action = self.strategy.update(security, tick)
         if action:
             self.redis.publish('action', {'action': action, 'tick': tick})
 
@@ -36,6 +36,5 @@ class TradingEngine(object):
                 # strategy will create actions
                 # traging center will see the actions
                 # and will place orders
-                tick['security'] = security
                 tick['data'] = json.loads(tick['data'].decode('utf-8').replace("'", '"').replace('u"', '"'))
-                self.execute(tick)
+                self.execute(security, tick)
