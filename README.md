@@ -1,8 +1,8 @@
+![Logo](https://cloud.githubusercontent.com/assets/568181/11385720/44413bac-92fa-11e5-87e7-0ec09f5eff1d.jpg)
+
 [![Build Status](https://travis-ci.org/llazzaro/analyzer.svg?branch=master)](https://travis-ci.org/llazzaro/analyzer)
 [![Coverage Status](https://coveralls.io/repos/llazzaro/analyzer/badge.svg)](https://coveralls.io/r/llazzaro/analyzer)
 [![Code Health](https://landscape.io/github/llazzaro/analyzer/master/landscape.svg?style=flat)](https://landscape.io/github/llazzaro/analyzer/master)
-
-# analyzer
 
 [![Join the chat at https://gitter.im/llazzaro/analyzer](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/llazzaro/analyzer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
