@@ -3,13 +3,14 @@ Created on Dec 18, 2011
 
 @author: ppa
 '''
+import json
 import logging
 
 from pyStock.models import (
     Order,
 )
 
-log=logging.getLogger()
+log=logging.getLogger(__name__)
 
 
 class TradingCenter(object):
@@ -21,6 +22,7 @@ class TradingCenter(object):
     def __init__(self, session, pubsub):
         self.session = session
         self.pubsub = pubsub
+        self.pubsub.subscribe('actions')
 
     def cancel_orders(self):
         orders_to_cancel = list(filter(lambda order: order.current_stage.is_open, self.session.query(Order).all()))
@@ -28,21 +30,20 @@ class TradingCenter(object):
             order.cancel()
         return orders_to_cancel
 
-    def listen(self, security):
-        self.pubsub.subscribe('actions')
-
     def _load_action(self, action):
-        pass
+        return json.loads(action['data'])
 
     def consume(self):
         # this trading center executes all actions
         # you could filter action source strategy.
         # combine strategies, etc
         for action in self.pubsub.listen():
+            if action['type'] == 'subscribe':
+                return
+
             log.info('Received action {0}'.format(action))
-            return
             action = self._load_action(action)
-            if not action.is_backtest:
+            if not action['is_backtest']:
                 action.execute()
 
     def open_orders(self, security):
