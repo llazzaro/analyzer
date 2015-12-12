@@ -2,6 +2,9 @@ import sys
 import logging
 
 
+__version__ = '0.1.2'
+
+
 def init_logging(logger, level=None):
     if not logger:
         logger = logging.getLogger('analyzer')

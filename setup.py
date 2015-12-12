@@ -5,10 +5,10 @@ Created on July 1, 2011
 '''
 from setuptools import setup
 
-version = '0.1.1'
+from analyzer import __version__ as ANALYZER_VERSION
 
 setup(name='analyzer',
-      version=version,
+      version=ANALYZER_VERSION,
       description="python project for finance: realtime data collection, analyze, algorithmic trading",
       long_description="""""",
       classifiers=[
@@ -45,6 +45,7 @@ setup(name='analyzer',
           'pyStock',
           'analyzerdam>=0.1.0',
           'analyzerstrategies>=0.1.3'
+          'psycopg2',
       ],
       tests_require=[
           'mox3',
@@ -54,4 +55,11 @@ setup(name='analyzer',
           'coveralls',
           'mockredispy',
       ],
-      test_suite='tests')
+      test_suite='tests',
+      entry_points={'console_scripts': [
+            'alarms = analyzer.scripts.alarms:main',
+            'backtester = analyzer.scripts.backtester:main',
+            'feeder = analyzer.scripts.feeder:main',
+            'trading_center = analyzer.scripts.trading_center:main',
+            'shell = analyzer.scripts.shell:main',
+            'trading_engine = analyzer.scripts.trading_engine:main', ]})
