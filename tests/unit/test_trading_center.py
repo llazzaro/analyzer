@@ -11,17 +11,19 @@ from sqlalchemy.orm.session import Session
 from analyzer.trading_center import TradingCenter
 from pyStock import Base
 from pyStock.models.money import Currency, Money
+from pyStock.models.account import (
+    Account,
+    Broker,
+    Owner,
+)
 from pyStock.models import (
     Stock,
     BuyOrder,
     CancelOrderStage,
-    Account,
-    Broker,
-    Owner,
     Exchange,
 )
 
-from mockredis import MockRedis
+from mock import MagicMock
 
 
 # Connect to the database and create the schema within a transaction
@@ -34,7 +36,7 @@ Base.metadata.create_all(connection)
 class testTradingCenter(unittest.TestCase):
 
     def setUp(self):
-        self.pubsub = MockRedis()
+        self.pubsub = MagicMock()
         self.trans = connection.begin()
         self.session = Session(connection)
 
