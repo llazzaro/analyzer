@@ -2,7 +2,7 @@ language: python
 sudo: required
 python:
   - 3.4
-before_install:
+install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
     else
@@ -17,7 +17,6 @@ before_install:
   - conda info -a
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION 
   - source activate test-environment
-install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION atlas numpy scipy pytest
   - conda install --yes python=$TRAVIS_PYTHON_VERSION matplotlib nose dateutil
   - conda install --yes python=$TRAVIS_PYTHON_VERSION pandas statsmodels pytables xlrd
