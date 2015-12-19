@@ -1,6 +1,6 @@
 from analyzer.alarms import EmailAlarm
 
-from . import (
+from analyzer.scripts import (
     initialize_config,
     initialize_redis,
 )

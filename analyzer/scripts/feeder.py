@@ -6,7 +6,7 @@ from analyzerdam.DAMFactory import DAMFactory
 from analyzer.constant import CONF_ANALYZER_SECTION
 
 from analyzer import init_logging
-from . import (
+from analyzer.scripts import (
     initialize_config,
     initialize_redis,
     initialize_database,
