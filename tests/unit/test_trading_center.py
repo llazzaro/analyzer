@@ -33,7 +33,7 @@ transaction = connection.begin()
 Base.metadata.create_all(connection)
 
 
-class testTradingCenter(unittest.TestCase):
+class TestTradingCenter(unittest.TestCase):
 
     def setUp(self):
         self.pubsub = MagicMock()

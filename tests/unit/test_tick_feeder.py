@@ -3,21 +3,21 @@ Created on Jan 18, 2011
 
 @author: ppa
 '''
-from mox3 import mox
+import datetime
 import unittest
 from datetime import timedelta
-import datetime
-from decimal import Decimal
 
+try:
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import MagicMock
 
 from mockredis import MockRedis
 from analyzer.dam import BaseDAM
 from pystock.models.money import Currency
 from pystock.models import (
-    Tick,
     Exchange,
     Stock,
-    SecurityQuote,
 )
 
 from analyzer.tick_feeder import TickFeeder, QuoteFeeder
@@ -25,7 +25,6 @@ from analyzer.tick_feeder import TickFeeder, QuoteFeeder
 
 class TestTickFeeder(unittest.TestCase):
     def setUp(self):
-        self.mock = mox.Mox()
         self.pubsub = MockRedis()
         self.pesos = Currency(name='Pesos', code='ARG')
         self.exchange = Exchange(name='Merval', currency=self.pesos)
@@ -37,62 +36,76 @@ class TestTickFeeder(unittest.TestCase):
 
         start = datetime.datetime.now() - timedelta(days=1)
         end = datetime.datetime.now() + timedelta(days=1)
-        cur_price = 10.4
 
-        quote_1_dam1 = SecurityQuote(date=now, close_price=cur_price, open_price=10.1, high_price=14, low_price=10.1, volume=10000, security=self.stock_one)
-        quote_2_dam1 = SecurityQuote(date=now, close_price=cur_price, open_price=112, high_price=14, low_price=10.5, volume=200, security=self.stock_two)
+        dam1 = self._dam_with_quotes(now, self.stock_one)
+        dam2 = self._dam_with_quotes(now, self.stock_two)
 
-        now_2 = datetime.datetime.now()
-        quote_1_dam2 = SecurityQuote(date=now_2, close_price=cur_price, open_price=10.1, high_price=14, low_price=10.1, volume=10000, security=self.stock_one)
-        quote_2_dam2 = SecurityQuote(date=now_2, close_price=cur_price, open_price=12, high_price=15, low_price=10.4, volume=300, security=self.stock_two)
+        tf1 = QuoteFeeder(publisher=self.pubsub, dam=dam1, security=self.stock_one)
+        tf2 = QuoteFeeder(publisher=self.pubsub, dam=dam2, security=self.stock_two)
 
-        dam1 = self.mock.CreateMock(BaseDAM)
-        dam1.read_quotes(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([quote_1_dam1, quote_2_dam1])
+        time_quotes_1 = tf1.load(start, end)
+        time_quotes_2 = tf2.load(start, end)
 
-        dam2 = self.mock.CreateMock(BaseDAM)
-        dam2.read_quotes(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([quote_1_dam2, quote_2_dam2])
-
-        tf1 = QuoteFeeder(publisher=self.pubsub, dam=dam1)
-        tf2 = QuoteFeeder(publisher=self.pubsub, dam=dam2)
-
-        self.mock.ReplayAll()
-        time_ticks_1 = tf1.load(start, end)
-        time_ticks_2 = tf2.load(start, end)
-        self.mock.VerifyAll()
-
-        self.assertEquals(time_ticks_1, [quote_1_dam1, quote_2_dam1])
-        self.assertEquals(time_ticks_2, [quote_1_dam2, quote_2_dam2])
+        self.assertEquals(time_quotes_1[0]['open'], 11.1)
+        self.assertEquals(time_quotes_2[0]['open'], 11.1)
 
     def test_tick_feeder(self):
         now = datetime.datetime.now()
         start = datetime.datetime.now() - timedelta(days=1)
         end = datetime.datetime.now() + timedelta(days=1)
-        tick_1_dam1 = Tick(security=self.stock_one, trade_date=now, price=Decimal(19), volume=100)
-        tick_2_dam1 = Tick(security=self.stock_one, trade_date=now, price=Decimal(23), volume=100)
 
         now_2 = datetime.datetime.now()
-        tick_1_dam2 = Tick(security=self.stock_two, trade_date=now_2, price=Decimal(8), volume=100)
-        tick_2_dam2 = Tick(security=self.stock_two, trade_date=now_2, price=Decimal(12), volume=100)
+        dam1 = self._dam_with_ticks(now, self.stock_one)
+        dam2 = self._dam_with_ticks(now_2, self.stock_two)
 
-        dam1 = self.mock.CreateMock(BaseDAM)
-        dam1.read_ticks(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([tick_1_dam1, tick_2_dam1])
+        tf_1 = TickFeeder(publisher=self.pubsub, dam=dam1, security=self.stock_one)
+        tf_2 = TickFeeder(publisher=self.pubsub, dam=dam2, security=self.stock_two)
 
-        dam2 = self.mock.CreateMock(BaseDAM)
-        dam2.read_ticks(mox.IgnoreArg(), mox.IgnoreArg(), mox.IgnoreArg()).AndReturn([tick_1_dam2, tick_2_dam2])
-
-        tf_1 = TickFeeder(publisher=self.pubsub, dam=dam1)
-        tf_2 = TickFeeder(publisher=self.pubsub, dam=dam2)
-
-        self.mock.ReplayAll()
         time_ticks_1 = tf_1.load(start, end)
         time_ticks_2 = tf_2.load(start, end)
-        self.mock.VerifyAll()
 
-        self.assertEquals(time_ticks_1, [tick_1_dam1, tick_2_dam1])
-        self.assertEquals(time_ticks_2, [tick_1_dam2, tick_2_dam2])
+        self.assertEquals(time_ticks_1[0]['open'], 11.1)
+
+        self.assertEquals(time_ticks_2[0]['open'], 11.1)
+
+    def _dam_with_quotes(self, now, stock):
+        quote_1_dam1 = {'date': now,
+                'close': 10,
+                'high': 11.5,
+                'low': 9.9,
+                'open': 11.1,
+                'volume': 192863}
+
+        dam1 = BaseDAM()
+        dam1.quotes = MagicMock(return_value=[quote_1_dam1])
+
+        return dam1
+
+    def _dam_with_ticks(self, now, stock):
+        tick_1_dam1 = {'date': now,
+                'close': 10,
+                'high': 11.5,
+                'low': 9.9,
+                'open': 11.1,
+                'volume': 192863}
+
+        dam1 = BaseDAM()
+        dam1.ticks = MagicMock(return_value=[tick_1_dam1])
+
+        return dam1
 
     def test_execute(self):
-        pass
+        now = datetime.datetime.now()
+        start = datetime.datetime.now() - timedelta(days=1)
+        end = datetime.datetime.now() + timedelta(days=1)
+        dam1 = self._dam_with_ticks(now, self.stock_one)
+        tf_1 = TickFeeder(publisher=self.pubsub, dam=dam1, security=self.stock_one)
+        self.pubsub.publish = MagicMock(return_value=None)
+        tf_1.execute(start, end)
+
+        self.assertTrue(self.pubsub.publish.called)
+        self.assertEquals(self.pubsub.publish.call_count, 1)
+        self.pubsub.publish.assert_called_with('PBR', {'volume': 192863, 'high': 11.5, 'low': 9.9, 'date': now, 'close': 10, 'open': 11.1})
 
 
 if __name__ == '__main__':
