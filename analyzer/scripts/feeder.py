@@ -1,4 +1,3 @@
-import time
 from datetime import datetime, timedelta
 
 from analyzer.tick_feeder import TickFeeder, QuoteFeeder
@@ -43,7 +42,6 @@ def execute(config, pubsub, session, securities):
     while True:
         last_execution = datetime.now()
         tick_feeder.execute(last_execution, datetime.now() + timedelta(minutes=100))
-        time.sleep(2)  # to avoid getting banned on cex
 
 
 def main():
