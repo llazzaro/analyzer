@@ -2,7 +2,7 @@ import sys
 import argparse
 
 from analyzer.trading_engine import TradingEngine
-from . import (
+from analyzer.scripts import (
     initialize_config,
     initialize_redis,
     initialize_strategy,
