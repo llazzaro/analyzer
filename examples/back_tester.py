@@ -21,7 +21,7 @@ from analyzer.constant import (
     CONF_STRATEGY_NAME,
 )
 from analyzer.ufConfig.pyConfig import PyConfig
-from pyStock.models import (
+from pystock.models import (
     Account,
     Owner,
     Broker,
@@ -31,10 +31,10 @@ from pyStock.models import (
 
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
-from pyStock.models.money import Money, Currency
+from pystock.models.money import Money, Currency
 
 from sqlalchemy.engine import create_engine
-from pyStock.models import Base
+from pystock.models import Base
 
 if __name__ == "__main__":
     logger = logging.getLogger('analyzer')

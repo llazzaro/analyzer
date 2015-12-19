@@ -12,8 +12,8 @@ from decimal import Decimal
 
 from mockredis import MockRedis
 from analyzer.dam import BaseDAM
-from pyStock.models.money import Currency
-from pyStock.models import (
+from pystock.models.money import Currency
+from pystock.models import (
     Tick,
     Exchange,
     Stock,

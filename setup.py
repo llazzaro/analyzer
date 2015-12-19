@@ -42,7 +42,7 @@ setup(name='analyzer',
           'SQLAlchemy>=0.8',
           'pbr<1.7.0',
           'pandas',
-          'pyStock',
+          'pystock',
           'analyzerdam>=0.1.0',
           'analyzerstrategies>=0.1.3'
           'psycopg2',

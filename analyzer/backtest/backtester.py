@@ -4,7 +4,7 @@ from analyzer.constant import (
     BUY,
     SELL,
 )
-from pyStock.models import (
+from pystock.models import (
     BuyOrder,
     SellOrder,
 )

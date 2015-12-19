@@ -9,14 +9,14 @@ from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import Session
 
 from analyzer.trading_center import TradingCenter
-from pyStock import Base
-from pyStock.models.money import Currency, Money
-from pyStock.models.account import (
+from pystock import Base
+from pystock.models.money import Currency, Money
+from pystock.models.account import (
     Account,
     Broker,
     Owner,
 )
-from pyStock.models import (
+from pystock.models import (
     Stock,
     BuyOrder,
     CancelOrderStage,

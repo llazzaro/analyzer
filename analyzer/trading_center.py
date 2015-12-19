@@ -6,7 +6,7 @@ Created on Dec 18, 2011
 import json
 import logging
 
-from pyStock.models import (
+from pystock.models import (
     Order,
 )
 

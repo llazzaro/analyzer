@@ -2,9 +2,9 @@ import unittest
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import Session
 
-from pyStock.models import Base  # This is your declarative base class
-from pyStock.models import *
-from pyStock.models.money import *
+from pystock.models import Base  # This is your declarative base class
+from pystock.models import *
+from pystock.models.money import *
 
 # Connect to the database and create the schema within a transaction
 engine = create_engine('sqlite://')

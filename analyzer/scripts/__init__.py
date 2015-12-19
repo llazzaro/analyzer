@@ -14,19 +14,19 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import create_engine
 
-from pyStock.models import (
+from pystock.models import (
     Stock,
     Exchange,
 )
-from pyStock.models.account import (
+from pystock.models.account import (
     Broker,
     Account,
     Owner
 )
 
-from pyStock.models.money import Currency
+from pystock.models.money import Currency
 
-from pyStock.models import Base
+from pystock.models import Base
 
 
 def initialize_config():
