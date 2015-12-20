@@ -1,6 +1,7 @@
 language: python
 sudo: required
 python:
+  - 2.7
   - 3.4
 install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
