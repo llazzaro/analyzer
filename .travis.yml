@@ -21,6 +21,7 @@ install:
   - conda install --yes python=$TRAVIS_PYTHON_VERSION matplotlib nose dateutil
   - conda install --yes python=$TRAVIS_PYTHON_VERSION pandas statsmodels pytables xlrd
   - pip install coveralls
+  - pip install pip install git+https://github.com/manahl/arctic.git
   - python setup.py install
 script:
   - python setup.py develop && coverage run setup.py test
