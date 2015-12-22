@@ -2,7 +2,7 @@ import unittest
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import Session
 
-from pystock.models import Base  # This is your declarative base class
+from pystock import Base  # This is your declarative base class
 from pystock.models import *
 from pystock.models.money import *
 

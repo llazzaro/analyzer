@@ -48,6 +48,7 @@ setup(name='analyzer',
           'psycopg2',
       ],
       tests_require=[
+          'numpy',
           'mox3',
           'xlrd',
           'xlwt',
